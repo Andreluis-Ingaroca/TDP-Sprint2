@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:lexp/pages/actions_my_categories.dart';
+import 'package:lexp/pages/actions_my_courses.dart';
 import 'package:lexp/pages/add_my_category.dart';
+import 'package:lexp/pages/add_my_course.dart';
+import 'package:lexp/pages/administrator.dart';
 import 'package:lexp/pages/delete_my_category.dart';
 import 'package:lexp/pages/delete_my_course.dart';
 import 'package:lexp/pages/home.dart';
 import 'package:lexp/pages/login.dart';
+import 'package:lexp/pages/modify_my_course.dart';
 import 'package:lexp/pages/onboarding.dart';
-import 'package:lexp/pages/page.dart';
 import 'package:lexp/pages/preferences.dart';
 import 'package:lexp/pages/register.dart';
-import 'package:lexp/pages/today_task.dart';
-
-import '../../pages/actions_my_courses.dart';
-import '../../pages/add_my_course.dart';
-import '../../pages/administrator.dart';
+import 'package:lexp/pages/update_my_course.dart';
 
 class Routes {
   static const onBoarding = "/";
@@ -29,6 +28,7 @@ class Routes {
   static const deleteMyCategory = "/deleteMyCategory";
   static const actionsMyCourses = "/actionsMyCourses";
   static const addMyCourse = "/addMyCourse";
+  static const updateMyCourse = "/updateMyCourse";
   static const deleteMyCourse = "/deleteMyCourse";
 }
 
@@ -43,10 +43,6 @@ class RouterGenerator {
         return MaterialPageRoute(
           builder: ((context) => const HomeScreen()),
         );
-      case Routes.todaysTask:
-        return MaterialPageRoute(
-          builder: ((context) => const TodaysTaskScreen()),
-        );
       case Routes.login:
         return MaterialPageRoute(
           builder: ((context) => const LoginScreen()),
@@ -58,10 +54,6 @@ class RouterGenerator {
       case Routes.preferences:
         return MaterialPageRoute(
           builder: ((context) => const PreferencesScreen()),
-        );
-      case Routes.page:
-        return MaterialPageRoute(
-          builder: ((context) => const PageScreen()),
         );
       case Routes.administrator:
         return MaterialPageRoute(
@@ -86,6 +78,10 @@ class RouterGenerator {
       case Routes.addMyCourse:
         return MaterialPageRoute(
           builder: ((context) => const AddMyCourseScreen()),
+        );
+      case Routes.updateMyCourse:
+        return MaterialPageRoute(
+          builder: ((context) => const UpdateMyCourseScreen()),
         );
       case Routes.deleteMyCourse:
         return MaterialPageRoute(

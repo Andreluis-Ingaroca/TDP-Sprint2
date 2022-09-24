@@ -11,9 +11,13 @@ class UserModel extends BaseModel {
   int timeQtty;
   int preferences;
   String pw;
+  final int type;
+  int numberOfCups;
 
   UserModel(
     super.status, {
+    this.type = 1,
+    this.numberOfCups = 0,
     required this.idUser,
     required this.username,
     required this.email,
@@ -22,8 +26,7 @@ class UserModel extends BaseModel {
     required this.pw,
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) =>
-      _$UserModelFromJson(json);
+  factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
 }

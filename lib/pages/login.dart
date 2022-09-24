@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
       var extracted = value.data;
       shared.SharedService().setKey("sessionKey", extracted["data"]["token"]);
       rest.RestProvider().callMethod("/uc/gube", params).then((userFetch) {
-        var user = UserModel.fromJson(userFetch.data["data"]);
+        UserModel user = UserModel.fromJson(userFetch.data["data"]);
         shared.SharedService().saveUser("user", user);
         Navigator.pushNamedAndRemoveUntil(context, Routes.home, (_) => false);
       }, onError: (error) {
@@ -76,13 +76,13 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pop(context);
       if (error.toString().contains("Bad credentials")) {
         const snackBar = SnackBar(
-          content: Text('Correo o contraseña incorrectos'),
+          content: Text('Correo y/o contraseña incorrectos'),
           backgroundColor: Colors.red,
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } else {
         final snackBar = SnackBar(
-          content: Text('Fallo el incio de sesión $error'),
+          content: Text('Fallo el incio de sesión: $error'),
           backgroundColor: Colors.red,
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -99,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
           elevation: 0,
           title: GradientText(
             'Iniciar sesión',
-            gradient: AppColors.iniciarGradient,
+            gradient: AppColors.textGradient,
           ),
         ),
         body: Form(
@@ -115,30 +115,22 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 40),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.17,
-                        child: Opacity(
-                            opacity: 0.9,
-                            child: SvgPicture.asset(AppConstants.logoSvg)),
+                        child: Opacity(opacity: 0.9, child: SvgPicture.asset(AppConstants.logoSvg)),
                       ),
                       const SizedBox(height: 40),
                       Text(
                         'Bienvenido/a',
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.bienvenidoColor),
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.bienvenidoColor),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Inicia sesión para continuar',
-                        style:
-                            TextStyle(color: AppColors.bienvenidoContentColor),
+                        style: TextStyle(color: AppColors.bienvenidoContentColor),
                       ),
                       const SizedBox(height: 40),
                       TextFormField(
                         keyboardType: TextInputType.emailAddress,
-                        validator: (val) => !EmailValidator.validate(val!, true)
-                            ? 'Correo electrónico inválido'
-                            : null,
+                        validator: (val) => !EmailValidator.validate(val!, true) ? 'Correo electrónico inválido' : null,
                         onSaved: (val) => _email = val!.toLowerCase(),
                         decoration: InputDecoration(
                             border: const OutlineInputBorder(),
@@ -159,8 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 8),
                       TextFormField(
                         obscureText: true,
-                        validator: (val) =>
-                            val!.length < 4 ? 'Contraseña muy corta' : null,
+                        validator: (val) => val!.length < 4 ? 'Contraseña muy corta' : null,
                         onSaved: (val) => _password = val!,
                         decoration: InputDecoration(
                             border: const OutlineInputBorder(),
@@ -193,18 +184,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(8.0),
                             ),
                           ),
-                          child: const Text('Iniciar sesión',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16)),
+                          child: const Text('Iniciar sesión', style: TextStyle(color: Colors.white, fontSize: 16)),
                         ),
                       ),
                       const SizedBox(height: 8),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('No tienes una cuenta?',
-                              style: TextStyle(
-                                  color: AppColors.contentRegisterColor)),
+                          Text('No tienes una cuenta?', style: TextStyle(color: AppColors.contentRegisterColor)),
                           const SizedBox(width: 4),
                           InkWell(
                             onTap: () {
@@ -212,9 +199,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                             child: Text(
                               'Regístrate',
-                              style: TextStyle(
-                                  color: AppColors.registerColor,
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(color: AppColors.registerColor, fontWeight: FontWeight.bold),
                             ),
                           )
                         ],

@@ -18,8 +18,10 @@ class ActionsMyCoursesScreen extends StatefulWidget {
 class _ActionsMyCoursesScreenState extends State<ActionsMyCoursesScreen> {
 
   late List<ThematicUnitModel> thematics = [];
-  late CategoryModel category;
   late Future _future;
+
+  late Map<int, String> categories = {};
+  late List<CategoryModel> allCategories = [];
 
   @override
   void initState() {
@@ -27,32 +29,15 @@ class _ActionsMyCoursesScreenState extends State<ActionsMyCoursesScreen> {
     super.initState();
     thematics;
 
-    var params = {
-      "data": {
-        "idCategory": "1",
-      }
-    };
-
-    _future = rest.RestProvider().callMethod("/cc/sbi", params);
+    _future = rest.RestProvider().callMethod("/cc/lac");
     _future.then((value) => {
-      category = shared.SharedService().getCategory(value),
-    });
-
-  }
-
-  String getCategory(String idCategory) {
-    var params = {
-      "data": {
-        "idCategory": idCategory,
+      print("ENTRADA"),
+      allCategories = shared.SharedService().getCategories(value),
+      print("ALL " + allCategories.toString()),
+      for (CategoryModel c in allCategories) {
+        categories[c.idCategory] = c.categoryName,
       }
-    };
-
-    _future = rest.RestProvider().callMethod("/cc/sbi", params);
-    _future.then((value) => {
-      category = shared.SharedService().getCategory(value),
     });
-
-    return category.categoryName;
   }
 
   @override
@@ -96,7 +81,9 @@ class _ActionsMyCoursesScreenState extends State<ActionsMyCoursesScreen> {
                               cells: [
                                 DataCell(Text(thematic.idThematicUnit.toString())),
                                 DataCell(Text(thematic.thematicUnitName)),
-                                DataCell(Text(getCategory(thematic.idCategory.toString()))),
+                                //DataCell(Text(getCategory(thematic.idCategory.toString()))),
+                                DataCell(Text(categories[thematic.idCategory].toString())),
+                                //getCategory(thematic.idCategory.toString()),
                               ]
                           )).toList(),
                         ),
@@ -146,7 +133,7 @@ class _ActionsMyCoursesScreenState extends State<ActionsMyCoursesScreen> {
             isSmall: true,
             icon: Icons.bookmark_border,
             onTap: () {
-              //Navigator.pushNamed(context, Routes.todaysTask);
+              Navigator.pushNamed(context, Routes.updateMyCourse);
             },
             blockTittle: "Modificar", //sugerencias primero
             //blockSubLabel: "Modificar",

@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lexp/models/base.dart';
+import 'package:lexp/models/category.dart';
+import 'package:lexp/models/content.dart';
 
 part 'thematic_unit.g.dart';
 
@@ -15,10 +17,12 @@ class ThematicUnitModel extends BaseModel {
   int starRate;
   int nTime;
   int nBadge;
+  final CategoryModel? category;
+  List<ContentModel>? listOfContent;
 
   ThematicUnitModel(super.status, this.thematicUnitName, this.description, this.portrait, this.nivel, this.minCalification, this.starRate,
-      this.nTime, this.nBadge,
-      {required this.idThematicUnit, required this.idCategory});
+      this.nTime, this.nBadge, this.category,
+      {required this.idThematicUnit, required this.idCategory, this.listOfContent});
 
   factory ThematicUnitModel.fromJson(Map<String, dynamic> json) => _$ThematicUnitModelFromJson(json);
 

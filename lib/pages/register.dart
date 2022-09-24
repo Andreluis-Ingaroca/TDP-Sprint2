@@ -62,8 +62,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       Navigator.pop(context);
       var user = UserModel.fromJson(userFetch.data["data"]);
       shared.SharedService().saveUser("user", user);
-      Navigator.pushNamedAndRemoveUntil(
-          context, Routes.preferences, (_) => false);
+      Navigator.pushNamedAndRemoveUntil(context, Routes.preferences, (_) => false);
     });
   }
 
@@ -75,7 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           elevation: 0,
           title: GradientText(
             'Registrarse',
-            gradient: AppColors.registerGradient,
+            gradient: AppColors.textGradient,
           ),
         ),
         key: scaffoldKey,
@@ -92,17 +91,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 40),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.17,
-                        child: Opacity(
-                            opacity: 0.9,
-                            child: SvgPicture.asset(AppConstants.logoSvg)),
+                        child: Opacity(opacity: 0.9, child: SvgPicture.asset(AppConstants.logoSvg)),
                       ),
                       const SizedBox(height: 40),
                       Text(
                         'Ingresa tus datos',
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.ingresarDatosColor),
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.ingresarDatosColor),
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -125,8 +119,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 borderSide: BorderSide(
                               color: AppColors.borderFocusedNameRegisterColor,
                             ))),
-                        style:
-                            TextStyle(color: AppColors.textNameRegisterColor),
+                        style: TextStyle(color: AppColors.textNameRegisterColor),
                         validator: (val) {
                           return shared.SharedService().validateNames(val!);
                         },
@@ -149,13 +142,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 borderSide: BorderSide(
                               color: AppColors.borderFocusedEmailRegisterColor,
                             ))),
-                        style:
-                            TextStyle(color: AppColors.textEmailRegisterColor),
+                        style: TextStyle(color: AppColors.textEmailRegisterColor),
                         validator: (val) {
-                          return !EmailValidator.validate(val!.trim()) &&
-                                  val.length < 150
-                              ? 'Correo electrónico inválido'
-                              : null;
+                          return !EmailValidator.validate(val!.trim()) && val.length < 150 ? 'Correo electrónico inválido' : null;
                         },
                         onSaved: (val) => _email = val!.toLowerCase().trim(),
                       ),
@@ -173,15 +162,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             )),
                             focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
-                              color:
-                                  AppColors.borderFocusedPasswordRegisterColor,
+                              color: AppColors.borderFocusedPasswordRegisterColor,
                             ))),
-                        style: TextStyle(
-                            color: AppColors.textPasswordRegisterColor),
+                        style: TextStyle(color: AppColors.textPasswordRegisterColor),
                         validator: (val) {
                           _password = val!;
-                          return shared.SharedService()
-                              .validateStrongPassword(val);
+                          return shared.SharedService().validateStrongPassword(val);
                         },
                         onSaved: (val) => _password = val!,
                         obscureText: true,
@@ -191,26 +177,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         decoration: InputDecoration(
                             labelText: 'Confirmar contraseña',
                             labelStyle: TextStyle(
-                              color: AppColors
-                                  .labelTextConfirmPasswordRegisterColor,
+                              color: AppColors.labelTextConfirmPasswordRegisterColor,
                             ),
                             border: const OutlineInputBorder(),
                             enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
-                              color:
-                                  AppColors.borderConfirmPasswordRegisterColor,
+                              color: AppColors.borderConfirmPasswordRegisterColor,
                             )),
                             focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
-                              color: AppColors
-                                  .borderFocusedConfirmPasswordRegisterColor,
+                              color: AppColors.borderFocusedConfirmPasswordRegisterColor,
                             ))),
-                        style: TextStyle(
-                            color: AppColors.textConfirmPasswordRegisterColor),
+                        style: TextStyle(color: AppColors.textConfirmPasswordRegisterColor),
                         validator: (val) {
-                          return val != passkey.currentState!.value
-                              ? 'Las contraseñas no coinciden'
-                              : null;
+                          return val != passkey.currentState!.value ? 'Las contraseñas no coinciden' : null;
                         },
                         obscureText: true,
                       ),
@@ -228,16 +208,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             child: const Text(
                               'Registrarse',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16),
+                              style: TextStyle(color: Colors.white, fontSize: 16),
                             ),
                           )),
                       const SizedBox(height: 8),
                       TextButton(
-                        child: Text('Iniciar sesión',
-                            style: TextStyle(
-                                color: AppColors.iniciarSesionColor,
-                                fontWeight: FontWeight.w900)),
+                        child: Text('Iniciar sesión', style: TextStyle(color: AppColors.iniciarSesionColor, fontWeight: FontWeight.w900)),
                         onPressed: () {
                           Navigator.of(context).pushReplacementNamed("/login");
                         },

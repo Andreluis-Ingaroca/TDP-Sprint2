@@ -1,17 +1,19 @@
 import 'package:dio/dio.dart';
+import 'package:lexp/models/book.dart';
 import 'package:lexp/models/category.dart';
 import 'package:lexp/models/content.dart';
+import 'package:lexp/models/notes.dart';
+import 'package:lexp/models/thematic_unit.dart';
+import 'package:lexp/models/ticket.dart';
 import 'package:lexp/models/user.dart';
+import 'package:lexp/models/user_book.dart';
+import 'package:lexp/models/user_unity.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:logger/logger.dart';
-
-import '../models/thematic_unit.dart'; //XXX
 
 class SharedService {
   final Future<SharedPreferences> _storage = SharedPreferences.getInstance();
 
-  var logger = Logger(); //XXX
   SharedService();
 
   Future<bool> setKey(String key, String value) async {
@@ -41,7 +43,8 @@ class SharedService {
 
   Future<bool> clear() async {
     final SharedPreferences prefs = await _storage;
-    return prefs.clear();
+    prefs.clear();
+    return prefs.setString("onBoard", "true");
   }
 
   Future<bool> saveUser(String key, UserModel user) async {
@@ -60,16 +63,6 @@ class SharedService {
     }
   }
 
-  CategoryModel getCategory(Response<dynamic>? data) {
-    late CategoryModel category;
-    if (data!.data != null) {
-      //for (var item in data.data["data"]) {
-        category = CategoryModel.fromJson(data.data["data"]);
-      //}
-    }
-    return category;
-  }
-
   List<CategoryModel> getCategories(Response<dynamic>? data) {
     List<CategoryModel> categories = [];
     if (data!.data != null) {
@@ -81,7 +74,6 @@ class SharedService {
   }
 
   List<ThematicUnitModel> getTUnits(Response<dynamic>? data) {
-    logger.d('getTUnits $data.data["data"]["thematicUnitName"]'); //XXX
     List<ThematicUnitModel> tUnits = [];
     if (data!.data != null) {
       for (var item in data.data["data"]) {
@@ -91,8 +83,57 @@ class SharedService {
     return tUnits;
   }
 
+  List<UserBookModel> getBuyedBooks(Response<dynamic>? data) {
+    List<UserBookModel> buyBooks = [];
+    if (data!.data != null) {
+      for (var item in data.data["data"]) {
+        buyBooks.add(UserBookModel.fromJson(item));
+      }
+    }
+    return buyBooks;
+  }
+
+  List<BookModel> getBooks(Response<dynamic>? data) {
+    List<BookModel> buyBooks = [];
+    if (data!.data != null) {
+      for (var item in data.data["data"]) {
+        buyBooks.add(BookModel.fromJson(item));
+      }
+    }
+    return buyBooks;
+  }
+
+  List<UserUnityModel> getEnrolls(Response<dynamic>? data) {
+    List<UserUnityModel> enrolls = [];
+    if (data!.data != null) {
+      for (var item in data.data["data"]) {
+        enrolls.add(UserUnityModel.fromJson(item));
+      }
+    }
+    return enrolls;
+  }
+
+  List<NotesModel> getNotes(Response<dynamic>? data) {
+    List<NotesModel> notes = [];
+    if (data!.data != null) {
+      for (var item in data.data["data"]) {
+        notes.add(NotesModel.fromJson(item));
+      }
+    }
+    return notes;
+  }
+
+  List<TicketModel> getTickets(Response<dynamic>? data) {
+    List<TicketModel> tickets = [];
+    if (data!.data != null) {
+      for (var item in data.data["data"]) {
+        tickets.add(TicketModel.fromJson(item));
+      }
+    }
+    return tickets;
+  }
+
   List<ContentModel> getContents(Response<dynamic>? data) {
-    logger.i("getContents"); //XXX
     List<ContentModel> contents = [];
     if (data!.data != null) {
       for (var item in data.data["data"]) {

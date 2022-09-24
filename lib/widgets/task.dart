@@ -17,18 +17,8 @@ class TaskWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              SizedBox(
-                width: 20.w,
-                child: Text(
-                  "${taskModel.from.hour} PM",
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(fontWeight: FontWeight.bold),
-                ),
-              ),
               Container(
-                width: 70.w,
+                width: 90.w,
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                     gradient: AppColors.getDarkLinearGradient(
@@ -58,7 +48,7 @@ class TaskWidget extends StatelessWidget {
                       height: 10,
                     ),
                     Text(
-                      "${taskModel.from.hour}  PM - ${taskModel.to.hour} PM",
+                      "${taskModel.from.hour}  min - ${taskModel.to.hour} min",
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.white.withOpacity(0.6),
@@ -70,13 +60,7 @@ class TaskWidget extends StatelessWidget {
               )
             ],
           ),
-          const SizedBox(
-            height: 15,
-          ),
           const Divider(),
-          const SizedBox(
-            height: 15,
-          ),
         ],
       ),
     );

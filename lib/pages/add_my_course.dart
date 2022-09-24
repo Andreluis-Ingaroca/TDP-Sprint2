@@ -4,15 +4,12 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:lexp/core/res/color.dart';
+import 'package:lexp/core/routes/routes.dart';
 import 'package:lexp/models/category.dart';
 import 'package:lexp/models/content.dart';
 import 'package:lexp/models/thematic_unit.dart';
 import 'package:lexp/services/rest_provider.dart' as rest;
 import 'package:lexp/services/shared_service.dart' as shared;
-
-
-enum SingingCharacter { lafayette, jefferson, anuel }
-
 
 class AddMyCourseScreen extends StatefulWidget {
   const AddMyCourseScreen({Key? key}) : super(key: key);
@@ -66,22 +63,41 @@ class _AddMyCourseScreenState extends State<AddMyCourseScreen> {
   final TextEditingController alternative2Controller = TextEditingController();
   final TextEditingController alternative3Controller = TextEditingController();
   final TextEditingController alternative4Controller = TextEditingController();
+  final TextEditingController answerController = TextEditingController();
+  
+  final List<TextEditingController> listQuestionController = [];
+  final List<TextEditingController> listAlternative1Controller = [];
+  final List<TextEditingController> listAlternative2Controller = [];
+  final List<TextEditingController> listAlternative3Controller = [];
+  final List<TextEditingController> listAlternative4Controller = [];
+  final List<TextEditingController> listAnswerController = [];
 
+  late List<List<TextEditingController>> doubleListQuestionController = [[]];
+  late List<List<TextEditingController>> doubleListAlternative1Controller = [[]];
+  late List<List<TextEditingController>> doubleListAlternative2Controller = [[]];
+  late List<List<TextEditingController>> doubleListAlternative3Controller = [[]];
+  late List<List<TextEditingController>> doubleListAlternative4Controller = [[]];
+  late List<List<TextEditingController>> doubleListAnswerController = [[]];
+  late List<List<int>> doubleListIndicatorQ = [[]];
 
   int statusSave = 0;
   int indicatorV = 0;
   int indicatorI = 0;
   int indicatorQ = 0;
+  List<int> listIndicatorQ = [];
   bool eliminated = false;
 
   late List<Widget> widgetV;
   late List<Widget> widgetI;
   late List<Widget> widgetQuestion;
-  late List<List<Widget>> doubleListQuestion;
+  late List<List<Widget>> doubleListQuestion = [[]];
+  late List<List<int>> idsQuestions = [[]];
 
   int idThematic = 0;
-  //List<int> idsVideos = [];
+  //int statusThematic = 0;
+  late ThematicUnitModel thematicData;
   Map<int, String> idsVideos = {};
+  List<int> idsExams = [];
   List<int> idsD = [];
   int idVideo = 0;
 
@@ -97,26 +113,6 @@ class _AddMyCourseScreenState extends State<AddMyCourseScreen> {
       },
       //print("CATGEORUA  "+ _categories.length.toString())
     });
-
-    var params = {
-      "data": {
-        "idThematicUnit": dropdownValue
-      }
-    };
-
-
-    //_future2 = rest.RestProvider().callMethod("/cntc/fabtui", params);
-    // _future2.then((value) => {
-    //   _contents = shared.SharedService().getContents(value),
-    //   // for (ContentModel c in _contents) {
-    //   //   if ( c.multimedia == linkContentController.text && c.posicion.toString() == positionContentController.text
-    //   //   && c.contentName == nameContentController.text && c.idThematicUnit.toString() == dropdownValue) {
-    //   //     filterContent = c,
-    //   //     print(filterContent.toJson().toString())
-    //   //   }
-    //   // },
-    //   print(_contents.toString()),
-    // });
 
     // TODO: implement initState
     super.initState();
@@ -297,202 +293,12 @@ class _AddMyCourseScreenState extends State<AddMyCourseScreen> {
       )
     ];
 
-
-
-    doubleListQuestion = [
-      [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.question_answer, color: Colors.purple, size: 30),
-            const SizedBox(
-              width: 15,
-            ),
-            Expanded(
-                child: TextFormField(
-                  controller: questionController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: 'Pregunta',
-                      labelStyle: TextStyle(
-                        color: AppColors.labelTextTematicaColor,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColors.borderTematicaColor,
-                          )),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColors.borderFocusedTematicaColor,
-                          ))),
-                  style: TextStyle(color: AppColors.textTematicaColor),
-                )
-            ),
-            IconButton(
-                onPressed: () {
-                  if (questionController.text.isNotEmpty && alternative1Controller.text.isNotEmpty &&
-                      alternative2Controller.text.isNotEmpty && alternative3Controller.text.isNotEmpty &&
-                      alternative4Controller.text.isNotEmpty) {
-                    indicatorQ -= 1;
-                    setState(() {
-                      print("ENTROO");
-                      //widgetQuestion.removeRange(0, 6);
-                      doubleListQuestion.removeAt(0);
-                    });
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Agregar la pregunta y sus alternativas para eliminar"),
-                    ));
-                  }
-                },
-                icon: Icon(Icons.delete, color: Colors.red)
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.circle_outlined, color: Colors.purple, size: 30),
-            const SizedBox(
-              width: 15,
-            ),
-            Expanded(
-                child: TextFormField(
-                  controller: alternative1Controller,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: 'Alternativa 1',
-                      labelStyle: TextStyle(
-                        color: AppColors.labelTextTematicaColor,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColors.borderTematicaColor,
-                          )),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColors.borderFocusedTematicaColor,
-                          ))),
-                  style: TextStyle(color: AppColors.textTematicaColor),
-                )
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.circle_outlined, color: Colors.purple, size: 30),
-            const SizedBox(
-              width: 15,
-            ),
-            Expanded(
-                child: TextFormField(
-                  controller: alternative2Controller,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: 'Alternativa 2',
-                      labelStyle: TextStyle(
-                        color: AppColors.labelTextTematicaColor,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColors.borderTematicaColor,
-                          )),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColors.borderFocusedTematicaColor,
-                          ))),
-                  style: TextStyle(color: AppColors.textTematicaColor),
-                )
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.circle_outlined, color: Colors.purple, size: 30),
-            const SizedBox(
-              width: 15,
-            ),
-            Expanded(
-                child: TextFormField(
-                  controller: alternative3Controller,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: 'Alternativa 3',
-                      labelStyle: TextStyle(
-                        color: AppColors.labelTextTematicaColor,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColors.borderTematicaColor,
-                          )),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColors.borderFocusedTematicaColor,
-                          ))),
-                  style: TextStyle(color: AppColors.textTematicaColor),
-                )
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.circle_outlined, color: Colors.purple, size: 30),
-            const SizedBox(
-              width: 15,
-            ),
-            Expanded(
-                child: TextFormField(
-                  controller: alternative4Controller,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: 'Alternativa 4',
-                      labelStyle: TextStyle(
-                        color: AppColors.labelTextTematicaColor,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColors.borderTematicaColor,
-                          )),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColors.borderFocusedTematicaColor,
-                          ))),
-                  style: TextStyle(color: AppColors.textTematicaColor),
-                )
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-      ],
-    ];
   }
 
   Future getAllContentsV() async {
     var params = {
       "data": {
-        "idThematicUnit": dropdownValue
+        "idThematicUnit": idThematic
       }
     };
     _future2 = rest.RestProvider().callMethod("/cntc/fabtui", params);
@@ -505,7 +311,7 @@ class _AddMyCourseScreenState extends State<AddMyCourseScreen> {
   Future getAllContentsI() async {
     var params = {
       "data": {
-        "idThematicUnit": dropdownValue
+        "idThematicUnit": idThematic
       }
     };
     _future3 = rest.RestProvider().callMethod("/cntc/fabtui", params);
@@ -566,7 +372,7 @@ class _AddMyCourseScreenState extends State<AddMyCourseScreen> {
   }
 
   saveThematic(String nameThematic, int idCategory, String description, String portrait, int nivel, int minCalification, int starRate, int nTime, int nBadge) async {
-
+    print("SAVE THEMATIC");
     if (nameThematic.isNotEmpty && description.isNotEmpty && portrait.isNotEmpty && idCategory.toString().isNotEmpty
     && nivel.toString().isNotEmpty && minCalification.toString().isNotEmpty && starRate.toString().isNotEmpty
     && nTime.toString().isNotEmpty && nBadge.toString().isNotEmpty) {
@@ -575,7 +381,7 @@ class _AddMyCourseScreenState extends State<AddMyCourseScreen> {
           "thematicUnitName": nameThematic,
           "idCategory": idCategory,
           "description": description,
-          "portrait": "https://bit.ly/3L70FMi",
+          "portrait": portrait,
           "nivel": nivel,
           "minCalification": minCalification,
           "starRate": starRate,
@@ -591,13 +397,19 @@ class _AddMyCourseScreenState extends State<AddMyCourseScreen> {
         var dat = jsonDecode(enc);
         //ThematicUnitModel t = res.data;
         //print("AQUI"+ t.idThematicUnit.toString());
-        ThematicUnitModel thematic = ThematicUnitModel.fromJson(res.data["data"]);
+        thematicData = ThematicUnitModel.fromJson(res.data["data"]);
         //ThematicUnitModel the = dat["data"];
         //idThematic = dat["data"]["idThematicUnit"];
-        idThematic = thematic.idThematicUnit;
+        idThematic = thematicData.idThematicUnit;
+        thematicData.status = 0;
         print("IDDDDD"+ dat["data"].toString());
-        setState((){
+        print("IDDDDSS"+ statusSave.toString());
 
+        _currentStep < 3 ?
+        setState(() => _currentStep += 1): null;
+
+        setState((){
+          statusSave;
         });
       }).catchError((err) {
         print("Failed: ${ err }");
@@ -871,372 +683,685 @@ class _AddMyCourseScreenState extends State<AddMyCourseScreen> {
     });
   }
 
-  addQuestion(TextEditingController questController, TextEditingController alt1Controller, TextEditingController alt2Controller, TextEditingController alt3Controller, TextEditingController alt4Controller) {
-    indicatorQ += 1;
-    doubleListQuestion.add([
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.question_answer, color: Colors.purple, size: 30),
-          const SizedBox(
-            width: 15,
-          ),
-          Expanded(
-              child: TextFormField(
-                controller: questController,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText: 'Pregunta',
-                    labelStyle: TextStyle(
-                      color: AppColors.labelTextTematicaColor,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: AppColors.borderTematicaColor,
-                        )),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: AppColors.borderFocusedTematicaColor,
-                        ))),
-                style: TextStyle(color: AppColors.textTematicaColor),
-              )
-          ),
-          IconButton(
-              onPressed: () {
-                //eliminated = true;
-                indicatorQ -= 1;
-                if (questController.text.isNotEmpty && alt1Controller.text.isNotEmpty &&
-                    alt2Controller.text.isNotEmpty && alt3Controller.text.isNotEmpty &&
-                    alt4Controller.text.isNotEmpty) {
-                  setState(() {
-                    print("TAMBIEN ENTROO");
-                    //widgetQuestion.removeRange((indicatorQ)*6, (indicatorQ)*6 + 6);
-                    doubleListQuestion.removeAt(indicatorQ);
-                  });
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Agregar la pregunta y sus alternativas para eliminar"),
-                  ));
-                }
-              },
-              icon: Icon(Icons.delete, color: Colors.red)
-          ),
-        ],
-      ),
-      const SizedBox(
-        height: 10,
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.circle_outlined, color: Colors.purple, size: 30),
-          const SizedBox(
-            width: 15,
-          ),
-          Expanded(
-              child: TextFormField(
-                controller: alt1Controller,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText: 'Alternativa 1',
-                    labelStyle: TextStyle(
-                      color: AppColors.labelTextTematicaColor,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: AppColors.borderTematicaColor,
-                        )),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: AppColors.borderFocusedTematicaColor,
-                        ))),
-                style: TextStyle(color: AppColors.textTematicaColor),
-              )
-          ),
-        ],
-      ),
-      const SizedBox(
-        height: 10,
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.circle_outlined, color: Colors.purple, size: 30),
-          const SizedBox(
-            width: 15,
-          ),
-          Expanded(
-              child: TextFormField(
-                controller: alt2Controller,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText: 'Alternativa 2',
-                    labelStyle: TextStyle(
-                      color: AppColors.labelTextTematicaColor,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: AppColors.borderTematicaColor,
-                        )),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: AppColors.borderFocusedTematicaColor,
-                        ))),
-                style: TextStyle(color: AppColors.textTematicaColor),
-              )
-          ),
-        ],
-      ),
-      const SizedBox(
-        height: 10,
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.circle_outlined, color: Colors.purple, size: 30),
-          const SizedBox(
-            width: 15,
-          ),
-          Expanded(
-              child: TextFormField(
-                controller: alt3Controller,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText: 'Alternativa 3',
-                    labelStyle: TextStyle(
-                      color: AppColors.labelTextTematicaColor,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: AppColors.borderTematicaColor,
-                        )),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: AppColors.borderFocusedTematicaColor,
-                        ))),
-                style: TextStyle(color: AppColors.textTematicaColor),
-              )
-          ),
-        ],
-      ),
-      const SizedBox(
-        height: 10,
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.circle_outlined, color: Colors.purple, size: 30),
-          const SizedBox(
-            width: 15,
-          ),
-          Expanded(
-              child: TextFormField(
-                controller: alt4Controller,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText: 'Alternativa 4',
-                    labelStyle: TextStyle(
-                      color: AppColors.labelTextTematicaColor,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: AppColors.borderTematicaColor,
-                        )),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: AppColors.borderFocusedTematicaColor,
-                        ))),
-                style: TextStyle(color: AppColors.textTematicaColor),
-              )
-          ),
-        ],
-      ),
-      const SizedBox(
-        height: 10,
-      ),
-    ]);
+  addQuestion(TextEditingController questController, TextEditingController alt1Controller, TextEditingController alt2Controller, TextEditingController alt3Controller, TextEditingController alt4Controller, TextEditingController ansController, int cont) {
+    //indicatorQ += 1;
+    //listIndicatorQ[cont] += 1;
+    doubleListIndicatorQ[cont].add(doubleListIndicatorQ[cont].last + 1);
+    // doubleListQuestion.add([
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [
+    //       const Icon(Icons.question_answer, color: Colors.purple, size: 25),
+    //       const SizedBox(
+    //         width: 15,
+    //       ),
+    //       Expanded(
+    //           child: TextFormField(
+    //             controller: questController,
+    //             keyboardType: TextInputType.text,
+    //             decoration: InputDecoration(
+    //                 isDense: true,
+    //                 border: const OutlineInputBorder(),
+    //                 labelText: 'Pregunta',
+    //                 labelStyle: TextStyle(
+    //                   color: AppColors.labelTextTematicaColor,
+    //                 ),
+    //                 enabledBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderTematicaColor,
+    //                     )),
+    //                 focusedBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderFocusedTematicaColor,
+    //                     ))),
+    //             style: TextStyle(color: AppColors.textTematicaColor),
+    //           )
+    //       ),
+    //       IconButton(
+    //           onPressed: () {
+    //             //eliminated = true;
+    //             indicatorQ -= 1;
+    //             if (questController.text.isNotEmpty && alt1Controller.text.isNotEmpty &&
+    //                 alt2Controller.text.isNotEmpty && alt3Controller.text.isNotEmpty &&
+    //                 alt4Controller.text.isNotEmpty) {
+    //               setState(() {
+    //                 print("TAMBIEN ENTROO");
+    //                 //widgetQuestion.removeRange((indicatorQ)*6, (indicatorQ)*6 + 6);
+    //                 doubleListQuestion.removeAt(indicatorQ);
+    //               });
+    //             } else {
+    //               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    //                 content: Text("Agregar la pregunta y sus alternativas para eliminar"),
+    //               ));
+    //             }
+    //           },
+    //           icon: Icon(Icons.delete, color: Colors.red)
+    //       ),
+    //     ],
+    //   ),
+    //   const SizedBox(
+    //     height: 10,
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [
+    //       const Icon(Icons.circle_outlined, color: Colors.purple, size: 25),
+    //       const SizedBox(
+    //         width: 15,
+    //       ),
+    //       Expanded(
+    //           child: TextFormField(
+    //             controller: alt1Controller,
+    //             keyboardType: TextInputType.text,
+    //             decoration: InputDecoration(
+    //                 isDense: true,
+    //                 border: const OutlineInputBorder(),
+    //                 labelText: 'Alternativa 1',
+    //                 labelStyle: TextStyle(
+    //                   color: AppColors.labelTextTematicaColor,
+    //                 ),
+    //                 enabledBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderTematicaColor,
+    //                     )),
+    //                 focusedBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderFocusedTematicaColor,
+    //                     ))),
+    //             style: TextStyle(color: AppColors.textTematicaColor),
+    //           )
+    //       ),
+    //     ],
+    //   ),
+    //   const SizedBox(
+    //     height: 10,
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [
+    //       const Icon(Icons.circle_outlined, color: Colors.purple, size: 25),
+    //       const SizedBox(
+    //         width: 15,
+    //       ),
+    //       Expanded(
+    //           child: TextFormField(
+    //             controller: alt2Controller,
+    //             keyboardType: TextInputType.text,
+    //             decoration: InputDecoration(
+    //                 isDense: true,
+    //                 border: const OutlineInputBorder(),
+    //                 labelText: 'Alternativa 2',
+    //                 labelStyle: TextStyle(
+    //                   color: AppColors.labelTextTematicaColor,
+    //                 ),
+    //                 enabledBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderTematicaColor,
+    //                     )),
+    //                 focusedBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderFocusedTematicaColor,
+    //                     ))),
+    //             style: TextStyle(color: AppColors.textTematicaColor),
+    //           )
+    //       ),
+    //     ],
+    //   ),
+    //   const SizedBox(
+    //     height: 10,
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [
+    //       const Icon(Icons.circle_outlined, color: Colors.purple, size: 25),
+    //       const SizedBox(
+    //         width: 15,
+    //       ),
+    //       Expanded(
+    //           child: TextFormField(
+    //             controller: alt3Controller,
+    //             keyboardType: TextInputType.text,
+    //             decoration: InputDecoration(
+    //                 isDense: true,
+    //                 border: const OutlineInputBorder(),
+    //                 labelText: 'Alternativa 3',
+    //                 labelStyle: TextStyle(
+    //                   color: AppColors.labelTextTematicaColor,
+    //                 ),
+    //                 enabledBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderTematicaColor,
+    //                     )),
+    //                 focusedBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderFocusedTematicaColor,
+    //                     ))),
+    //             style: TextStyle(color: AppColors.textTematicaColor),
+    //           )
+    //       ),
+    //     ],
+    //   ),
+    //   const SizedBox(
+    //     height: 10,
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [
+    //       const Icon(Icons.circle_outlined, color: Colors.purple, size: 25),
+    //       const SizedBox(
+    //         width: 15,
+    //       ),
+    //       Expanded(
+    //           child: TextFormField(
+    //             controller: alt4Controller,
+    //             keyboardType: TextInputType.text,
+    //             decoration: InputDecoration(
+    //                 isDense: true,
+    //                 border: const OutlineInputBorder(),
+    //                 labelText: 'Alternativa 4',
+    //                 labelStyle: TextStyle(
+    //                   color: AppColors.labelTextTematicaColor,
+    //                 ),
+    //                 enabledBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderTematicaColor,
+    //                     )),
+    //                 focusedBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderFocusedTematicaColor,
+    //                     ))),
+    //             style: TextStyle(color: AppColors.textTematicaColor),
+    //           )
+    //       ),
+    //     ],
+    //   ),
+    //   const SizedBox(
+    //     height: 10,
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [
+    //       const Icon(Icons.question_answer_outlined, color: Colors.purple, size: 25),
+    //       const SizedBox(
+    //         width: 15,
+    //       ),
+    //       Expanded(
+    //           child: TextFormField(
+    //             controller: ansController,
+    //             keyboardType: TextInputType.number,
+    //             decoration: InputDecoration(
+    //                 isDense: true,
+    //                 border: const OutlineInputBorder(),
+    //                 labelText: 'RESPUESTA  = 1, 2, 3 o 4',
+    //                 labelStyle: TextStyle(
+    //                   color: AppColors.labelTextTematicaColor,
+    //                 ),
+    //                 enabledBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderTematicaColor,
+    //                     )),
+    //                 focusedBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderFocusedTematicaColor,
+    //                     ))),
+    //             style: TextStyle(color: AppColors.textTematicaColor),
+    //           )
+    //       ),
+    //     ],
+    //   ),
+    //   const SizedBox(
+    //     height: 10,
+    //   ),
+    // ]);
 
+    print("DOUBLEIQ" + doubleListQuestion[cont].length.toString());
+    doubleListQuestion[cont].add(Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.question_answer, color: Colors.purple, size: 25),
+        const SizedBox(
+          width: 15,
+        ),
+        Expanded(
+            child: TextFormField(
+              controller: questController,
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                  isDense: true,
+                  border: const OutlineInputBorder(),
+                  labelText: 'Pregunta',
+                  labelStyle: TextStyle(
+                    color: AppColors.labelTextTematicaColor,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors.borderTematicaColor,
+                      )),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors.borderFocusedTematicaColor,
+                      ))),
+              style: TextStyle(color: AppColors.textTematicaColor),
+            )
+        ),
+        IconButton(
+            onPressed: () {
+              //eliminated = true;
+              //listIndicatorQ[cont] -= 1;
+              doubleListIndicatorQ[cont].add(doubleListIndicatorQ[cont].last - 1);
+              if (questController.text.isNotEmpty && alt1Controller.text.isNotEmpty &&
+                  alt2Controller.text.isNotEmpty && alt3Controller.text.isNotEmpty &&
+                  alt4Controller.text.isNotEmpty) {
+                setState(() {
+                  print("TAMBIEN ENTROO");
+                  //widgetQuestion.removeRange((indicatorQ)*6, (indicatorQ)*6 + 6);
+                  //doubleListQuestion[cont].removeRange(listIndicatorQ[cont], listIndicatorQ[cont] + 7);
+                  doubleListQuestion[cont].removeRange(doubleListIndicatorQ[cont].last, doubleListIndicatorQ[cont].last + 7);
+                  deleteQuestion(idsQuestions[cont].last.toString());
+                });
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text("Agregar la pregunta y sus alternativas para eliminar"),
+                ));
+              }
+            },
+            icon: Icon(Icons.delete, color: Colors.red)
+        ),
+      ],
+    ));
+    doubleListQuestion[cont].add(Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.circle_outlined, color: Colors.purple, size: 25),
+        const SizedBox(
+          width: 15,
+        ),
+        Expanded(
+            child: TextFormField(
+              controller: alt1Controller,
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                  isDense: true,
+                  border: const OutlineInputBorder(),
+                  labelText: 'Alternativa 1',
+                  labelStyle: TextStyle(
+                    color: AppColors.labelTextTematicaColor,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors.borderTematicaColor,
+                      )),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors.borderFocusedTematicaColor,
+                      ))),
+              style: TextStyle(color: AppColors.textTematicaColor),
+            )
+        ),
+      ],
+    ));
+    doubleListQuestion[cont].add(Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.circle_outlined, color: Colors.purple, size: 25),
+        const SizedBox(
+          width: 15,
+        ),
+        Expanded(
+            child: TextFormField(
+              controller: alt2Controller,
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                  isDense: true,
+                  border: const OutlineInputBorder(),
+                  labelText: 'Alternativa 2',
+                  labelStyle: TextStyle(
+                    color: AppColors.labelTextTematicaColor,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors.borderTematicaColor,
+                      )),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors.borderFocusedTematicaColor,
+                      ))),
+              style: TextStyle(color: AppColors.textTematicaColor),
+            )
+        ),
+      ],
+    ));
+    doubleListQuestion[cont].add(Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.circle_outlined, color: Colors.purple, size: 25),
+        const SizedBox(
+          width: 15,
+        ),
+        Expanded(
+            child: TextFormField(
+              controller: alt3Controller,
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                  isDense: true,
+                  border: const OutlineInputBorder(),
+                  labelText: 'Alternativa 3',
+                  labelStyle: TextStyle(
+                    color: AppColors.labelTextTematicaColor,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors.borderTematicaColor,
+                      )),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors.borderFocusedTematicaColor,
+                      ))),
+              style: TextStyle(color: AppColors.textTematicaColor),
+            )
+        ),
+      ],
+    ));
+    doubleListQuestion[cont].add(Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.circle_outlined, color: Colors.purple, size: 25),
+        const SizedBox(
+          width: 15,
+        ),
+        Expanded(
+            child: TextFormField(
+              controller: alt4Controller,
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                  isDense: true,
+                  border: const OutlineInputBorder(),
+                  labelText: 'Alternativa 4',
+                  labelStyle: TextStyle(
+                    color: AppColors.labelTextTematicaColor,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors.borderTematicaColor,
+                      )),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors.borderFocusedTematicaColor,
+                      ))),
+              style: TextStyle(color: AppColors.textTematicaColor),
+            )
+        ),
+      ],
+    ));
+    doubleListQuestion[cont].add(Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.question_answer_outlined, color: Colors.purple, size: 25),
+        const SizedBox(
+          width: 15,
+        ),
+        Expanded(
+            child: TextFormField(
+              controller: ansController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                  isDense: true,
+                  border: const OutlineInputBorder(),
+                  labelText: 'RESPUESTA  = 1, 2, 3 o 4',
+                  labelStyle: TextStyle(
+                    color: AppColors.labelTextTematicaColor,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors.borderTematicaColor,
+                      )),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors.borderFocusedTematicaColor,
+                      ))),
+              style: TextStyle(color: AppColors.textTematicaColor),
+            )
+        ),
+      ],
+    ));
+    doubleListQuestion[cont].add(const SizedBox(
+      height: 10,
+    ));
 
-    // widgetQuestion.add(Row(
-    //   mainAxisAlignment: MainAxisAlignment.center,
-    //   children: [
-    //     const Icon(Icons.question_answer, color: Colors.purple, size: 30),
-    //     const SizedBox(
-    //       width: 15,
-    //     ),
-    //     Expanded(
-    //         child: TextFormField(
-    //           controller: questController,
-    //           keyboardType: TextInputType.text,
-    //           decoration: InputDecoration(
-    //               border: const OutlineInputBorder(),
-    //               labelText: 'Pregunta',
-    //               labelStyle: TextStyle(
-    //                 color: AppColors.labelTextTematicaColor,
-    //               ),
-    //               enabledBorder: OutlineInputBorder(
-    //                   borderSide: BorderSide(
-    //                     color: AppColors.borderTematicaColor,
-    //                   )),
-    //               focusedBorder: OutlineInputBorder(
-    //                   borderSide: BorderSide(
-    //                     color: AppColors.borderFocusedTematicaColor,
-    //                   ))),
-    //           style: TextStyle(color: AppColors.textTematicaColor),
-    //         )
-    //     ),
-    //     IconButton(
-    //         onPressed: () {
-    //           //eliminated = true;
-    //           indicatorQ -= 1;
-    //           if (questController.text.isNotEmpty && alt1Controller.text.isNotEmpty &&
-    //               alt2Controller.text.isNotEmpty && alt3Controller.text.isNotEmpty &&
-    //               alt4Controller.text.isNotEmpty) {
-    //             setState(() {
-    //               print("TAMBIEN ENTROO");
-    //               widgetQuestion.removeRange((indicatorQ)*6, (indicatorQ)*6 + 6);
-    //             });
-    //           } else {
-    //             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-    //               content: Text("Agregar la pregunta y sus alternativas para eliminar"),
-    //             ));
-    //           }
-    //         },
-    //         icon: Icon(Icons.delete, color: Colors.red)
-    //     ),
-    //   ],
-    // ));
-    // widgetQuestion.add(Row(
-    //   mainAxisAlignment: MainAxisAlignment.center,
-    //   children: [
-    //     const Icon(Icons.circle_outlined, color: Colors.purple, size: 30),
-    //     const SizedBox(
-    //       width: 15,
-    //     ),
-    //     Expanded(
-    //         child: TextFormField(
-    //           controller: alt1Controller,
-    //           keyboardType: TextInputType.text,
-    //           decoration: InputDecoration(
-    //               border: const OutlineInputBorder(),
-    //               labelText: 'Alternativa 1',
-    //               labelStyle: TextStyle(
-    //                 color: AppColors.labelTextTematicaColor,
-    //               ),
-    //               enabledBorder: OutlineInputBorder(
-    //                   borderSide: BorderSide(
-    //                     color: AppColors.borderTematicaColor,
-    //                   )),
-    //               focusedBorder: OutlineInputBorder(
-    //                   borderSide: BorderSide(
-    //                     color: AppColors.borderFocusedTematicaColor,
-    //                   ))),
-    //           style: TextStyle(color: AppColors.textTematicaColor),
-    //         )
-    //     ),
-    //   ],
-    // ));
-    // widgetQuestion.add(Row(
-    //   mainAxisAlignment: MainAxisAlignment.center,
-    //   children: [
-    //     const Icon(Icons.circle_outlined, color: Colors.purple, size: 30),
-    //     const SizedBox(
-    //       width: 15,
-    //     ),
-    //     Expanded(
-    //         child: TextFormField(
-    //           controller: alt2Controller,
-    //           keyboardType: TextInputType.text,
-    //           decoration: InputDecoration(
-    //               border: const OutlineInputBorder(),
-    //               labelText: 'Alternativa 2',
-    //               labelStyle: TextStyle(
-    //                 color: AppColors.labelTextTematicaColor,
-    //               ),
-    //               enabledBorder: OutlineInputBorder(
-    //                   borderSide: BorderSide(
-    //                     color: AppColors.borderTematicaColor,
-    //                   )),
-    //               focusedBorder: OutlineInputBorder(
-    //                   borderSide: BorderSide(
-    //                     color: AppColors.borderFocusedTematicaColor,
-    //                   ))),
-    //           style: TextStyle(color: AppColors.textTematicaColor),
-    //         )
-    //     ),
-    //   ],
-    // ));
-    // widgetQuestion.add(Row(
-    //   mainAxisAlignment: MainAxisAlignment.center,
-    //   children: [
-    //     const Icon(Icons.circle_outlined, color: Colors.purple, size: 30),
-    //     const SizedBox(
-    //       width: 15,
-    //     ),
-    //     Expanded(
-    //         child: TextFormField(
-    //           controller: alt3Controller,
-    //           keyboardType: TextInputType.text,
-    //           decoration: InputDecoration(
-    //               border: const OutlineInputBorder(),
-    //               labelText: 'Alternativa 3',
-    //               labelStyle: TextStyle(
-    //                 color: AppColors.labelTextTematicaColor,
-    //               ),
-    //               enabledBorder: OutlineInputBorder(
-    //                   borderSide: BorderSide(
-    //                     color: AppColors.borderTematicaColor,
-    //                   )),
-    //               focusedBorder: OutlineInputBorder(
-    //                   borderSide: BorderSide(
-    //                     color: AppColors.borderFocusedTematicaColor,
-    //                   ))),
-    //           style: TextStyle(color: AppColors.textTematicaColor),
-    //         )
-    //     ),
-    //   ],
-    // ));
-    // widgetQuestion.add(Row(
-    //   mainAxisAlignment: MainAxisAlignment.center,
-    //   children: [
-    //     const Icon(Icons.circle_outlined, color: Colors.purple, size: 30),
-    //     const SizedBox(
-    //       width: 15,
-    //     ),
-    //     Expanded(
-    //         child: TextFormField(
-    //           controller: alt4Controller,
-    //           keyboardType: TextInputType.text,
-    //           decoration: InputDecoration(
-    //               border: const OutlineInputBorder(),
-    //               labelText: 'Alternativa 4',
-    //               labelStyle: TextStyle(
-    //                 color: AppColors.labelTextTematicaColor,
-    //               ),
-    //               enabledBorder: OutlineInputBorder(
-    //                   borderSide: BorderSide(
-    //                     color: AppColors.borderTematicaColor,
-    //                   )),
-    //               focusedBorder: OutlineInputBorder(
-    //                   borderSide: BorderSide(
-    //                     color: AppColors.borderFocusedTematicaColor,
-    //                   ))),
-    //           style: TextStyle(color: AppColors.textTematicaColor),
-    //         )
-    //     ),
-    //   ],
-    // ));
-    // widgetQuestion.add(const SizedBox(
-    //   height: 10,
-    // ));
+    setState(() {
+      doubleListQuestion;
+    });
+
+    // doubleListQuestion[cont].addAll([
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [
+    //       const Icon(Icons.question_answer, color: Colors.purple, size: 25),
+    //       const SizedBox(
+    //         width: 15,
+    //       ),
+    //       Expanded(
+    //           child: TextFormField(
+    //             controller: questController,
+    //             keyboardType: TextInputType.text,
+    //             decoration: InputDecoration(
+    //                 isDense: true,
+    //                 border: const OutlineInputBorder(),
+    //                 labelText: 'Pregunta',
+    //                 labelStyle: TextStyle(
+    //                   color: AppColors.labelTextTematicaColor,
+    //                 ),
+    //                 enabledBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderTematicaColor,
+    //                     )),
+    //                 focusedBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderFocusedTematicaColor,
+    //                     ))),
+    //             style: TextStyle(color: AppColors.textTematicaColor),
+    //           )
+    //       ),
+    //       IconButton(
+    //           onPressed: () {
+    //             //eliminated = true;
+    //             indicatorQ -= 1;
+    //             if (questController.text.isNotEmpty && alt1Controller.text.isNotEmpty &&
+    //                 alt2Controller.text.isNotEmpty && alt3Controller.text.isNotEmpty &&
+    //                 alt4Controller.text.isNotEmpty) {
+    //               setState(() {
+    //                 print("TAMBIEN ENTROO");
+    //                 //widgetQuestion.removeRange((indicatorQ)*6, (indicatorQ)*6 + 6);
+    //                 doubleListQuestion.removeAt(indicatorQ);
+    //               });
+    //             } else {
+    //               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    //                 content: Text("Agregar la pregunta y sus alternativas para eliminar"),
+    //               ));
+    //             }
+    //           },
+    //           icon: Icon(Icons.delete, color: Colors.red)
+    //       ),
+    //     ],
+    //   ),
+    //   const SizedBox(
+    //     height: 10,
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [
+    //       const Icon(Icons.circle_outlined, color: Colors.purple, size: 25),
+    //       const SizedBox(
+    //         width: 15,
+    //       ),
+    //       Expanded(
+    //           child: TextFormField(
+    //             controller: alt1Controller,
+    //             keyboardType: TextInputType.text,
+    //             decoration: InputDecoration(
+    //                 isDense: true,
+    //                 border: const OutlineInputBorder(),
+    //                 labelText: 'Alternativa 1',
+    //                 labelStyle: TextStyle(
+    //                   color: AppColors.labelTextTematicaColor,
+    //                 ),
+    //                 enabledBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderTematicaColor,
+    //                     )),
+    //                 focusedBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderFocusedTematicaColor,
+    //                     ))),
+    //             style: TextStyle(color: AppColors.textTematicaColor),
+    //           )
+    //       ),
+    //     ],
+    //   ),
+    //   const SizedBox(
+    //     height: 10,
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [
+    //       const Icon(Icons.circle_outlined, color: Colors.purple, size: 25),
+    //       const SizedBox(
+    //         width: 15,
+    //       ),
+    //       Expanded(
+    //           child: TextFormField(
+    //             controller: alt2Controller,
+    //             keyboardType: TextInputType.text,
+    //             decoration: InputDecoration(
+    //                 isDense: true,
+    //                 border: const OutlineInputBorder(),
+    //                 labelText: 'Alternativa 2',
+    //                 labelStyle: TextStyle(
+    //                   color: AppColors.labelTextTematicaColor,
+    //                 ),
+    //                 enabledBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderTematicaColor,
+    //                     )),
+    //                 focusedBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderFocusedTematicaColor,
+    //                     ))),
+    //             style: TextStyle(color: AppColors.textTematicaColor),
+    //           )
+    //       ),
+    //     ],
+    //   ),
+    //   const SizedBox(
+    //     height: 10,
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [
+    //       const Icon(Icons.circle_outlined, color: Colors.purple, size: 25),
+    //       const SizedBox(
+    //         width: 15,
+    //       ),
+    //       Expanded(
+    //           child: TextFormField(
+    //             controller: alt3Controller,
+    //             keyboardType: TextInputType.text,
+    //             decoration: InputDecoration(
+    //                 isDense: true,
+    //                 border: const OutlineInputBorder(),
+    //                 labelText: 'Alternativa 3',
+    //                 labelStyle: TextStyle(
+    //                   color: AppColors.labelTextTematicaColor,
+    //                 ),
+    //                 enabledBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderTematicaColor,
+    //                     )),
+    //                 focusedBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderFocusedTematicaColor,
+    //                     ))),
+    //             style: TextStyle(color: AppColors.textTematicaColor),
+    //           )
+    //       ),
+    //     ],
+    //   ),
+    //   const SizedBox(
+    //     height: 10,
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [
+    //       const Icon(Icons.circle_outlined, color: Colors.purple, size: 25),
+    //       const SizedBox(
+    //         width: 15,
+    //       ),
+    //       Expanded(
+    //           child: TextFormField(
+    //             controller: alt4Controller,
+    //             keyboardType: TextInputType.text,
+    //             decoration: InputDecoration(
+    //                 isDense: true,
+    //                 border: const OutlineInputBorder(),
+    //                 labelText: 'Alternativa 4',
+    //                 labelStyle: TextStyle(
+    //                   color: AppColors.labelTextTematicaColor,
+    //                 ),
+    //                 enabledBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderTematicaColor,
+    //                     )),
+    //                 focusedBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderFocusedTematicaColor,
+    //                     ))),
+    //             style: TextStyle(color: AppColors.textTematicaColor),
+    //           )
+    //       ),
+    //     ],
+    //   ),
+    //   const SizedBox(
+    //     height: 10,
+    //   ),
+    //   Row(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [
+    //       const Icon(Icons.question_answer_outlined, color: Colors.purple, size: 25),
+    //       const SizedBox(
+    //         width: 15,
+    //       ),
+    //       Expanded(
+    //           child: TextFormField(
+    //             controller: ansController,
+    //             keyboardType: TextInputType.number,
+    //             decoration: InputDecoration(
+    //                 isDense: true,
+    //                 border: const OutlineInputBorder(),
+    //                 labelText: 'RESPUESTA  = 1, 2, 3 o 4',
+    //                 labelStyle: TextStyle(
+    //                   color: AppColors.labelTextTematicaColor,
+    //                 ),
+    //                 enabledBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderTematicaColor,
+    //                     )),
+    //                 focusedBorder: OutlineInputBorder(
+    //                     borderSide: BorderSide(
+    //                       color: AppColors.borderFocusedTematicaColor,
+    //                     ))),
+    //             style: TextStyle(color: AppColors.textTematicaColor),
+    //           )
+    //       ),
+    //     ],
+    //   ),
+    //   const SizedBox(
+    //     height: 10,
+    //   ),
+    // ]);
+    print("DOUBLEIA" + doubleListQuestion[cont].length.toString());
 
   }
-
+  
   saveExam(String idThematicUnit, String idContent, String nExamen) {
     var params = {
       "data": {
@@ -1246,7 +1371,53 @@ class _AddMyCourseScreenState extends State<AddMyCourseScreen> {
       }
     };
 
-    rest.RestProvider().callMethod("/cntc/sc", params).then((res) {
+    rest.RestProvider().callMethod("/exc/se", params).then((res) {
+      print("Successful: ${res.statusCode}");
+      var enc = jsonEncode(res.data);
+      var dat = jsonDecode(enc);
+      //ThematicUnitModel t = res.data;
+      //print("AQUI"+ t.idThematicUnit.toString());
+      var idE = dat["data"]["idExamen"];
+      print("IDEXAMEN" + idE.toString());
+      idsExams.add(idE);
+    }).catchError((err) {
+      print("Failed: ${ err }");
+    });
+  }
+
+  saveQuestion(String quest, String alt1, String alt2, String alt3, String alt4, String ans, String idEx, int index) {
+    var params = {
+      "data": {
+        "label": quest,
+        "alternative1": alt1,
+        "alternative2": alt2,
+        "alternative3": alt3,
+        "alternative4": alt4,
+        "answer": ans,
+        "idExamen": idEx
+      }
+    };
+
+    rest.RestProvider().callMethod("/qc/sq", params).then((res) {
+      print("Successful: ${res.statusCode}");
+      var enc = jsonEncode(res.data);
+      var dat = jsonDecode(enc);
+      var idQ = dat["data"]["idQuestion"];
+      idsQuestions[index].add(idQ);
+      print("IDEXAMEN" + idQ.toString());
+    }).catchError((err) {
+      print("Failed: ${ err }");
+    });
+  }
+
+  deleteQuestion(String id) {
+    var params = {
+      "data": {
+        "idQuestion": id,
+      }
+    };
+
+    rest.RestProvider().callMethod("/qc/del", params).then((res) {
       print("Successful: ${res.statusCode}");
     }).catchError((err) {
       print("Failed: ${ err }");
@@ -1258,6 +1429,9 @@ class _AddMyCourseScreenState extends State<AddMyCourseScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        //automaticallyImplyLeading: false,
+        title: Text('AGREGAR UN CURSO'),
+        centerTitle: true,
       ),
 
       body: Column(
@@ -1277,22 +1451,17 @@ class _AddMyCourseScreenState extends State<AddMyCourseScreen> {
                     TextButton(
                       onPressed: () {
                           if (_currentStep == 0) {
-                            if (statusSave == 200) {
-                              continued1();
-                              statusSave = 0;
-                            } else {
-                              //COMENTAR
-                              continued1();
-                              statusSave = 0;
-                            }
+                            continued1();
                           } else if (_currentStep == 1) {
-                            if (indicatorV > 0) {
-                              continued2();
-                            } else {
-                              //COMENTAR
-                              print("NOPUEDESENTRAR");
-                              continued2();
+                            print("indi" + idsVideos.toString());
+                            continued2();
+                            idsVideos.forEach((key, value) {
+                              saveExam(idThematic.toString(), key.toString(), value);
+                            });
+                            for (int i = 0; i<idsVideos.length;i++) {
+                              idsQuestions.add([0]);
                             }
+
                           } else {
                             continued3();
                           }
@@ -1424,15 +1593,11 @@ class _AddMyCourseScreenState extends State<AddMyCourseScreen> {
                                     height: 60,
                                     child: DropdownButton(
                                       value: dropdownValue,
-                                      // icon: const Icon(Icons.arrow_downward),
-                                      // elevation: 16,
                                       style: TextStyle(color: AppColors.labelTextTematicaColor, fontSize: 16),
                                       underline: Container(
                                         height: 2,
                                         color: AppColors.borderFocusedTematicaColor,
                                       ),
-
-
                                       icon: const Icon(Icons.expand_more),
                                       iconEnabledColor: Colors.purple,
                                       iconSize: 24,
@@ -1789,20 +1954,126 @@ class _AddMyCourseScreenState extends State<AddMyCourseScreen> {
                           const Text("QUESTIONARIO", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 24)),
                           IconButton(
                               onPressed: () {
-                                if (indicatorQ >= 0 && questionController.text.isNotEmpty && alternative1Controller.text.isNotEmpty
-                                && alternative2Controller.text.isNotEmpty && alternative3Controller.text.isNotEmpty
-                                && alternative4Controller.text.isNotEmpty) {
-                                  addQuestion(TextEditingController(), TextEditingController(), TextEditingController(), TextEditingController(), TextEditingController());
-                                  print("FILTRO VIDEO" + _contentsV.length.toString());
-                                  setState(() {
-                                    //widgetQuestion;
-                                    doubleListQuestion;
-                                  });
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                    content: Text("Completar todos los campos para agregar una pregunta"),
-                                  ));
-                                }
+                                showDialog(
+                                    context: context,
+                                    barrierDismissible: true,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        contentPadding: EdgeInsets.all(0),
+                                        content: SingleChildScrollView(
+                                          child: Column(
+                                            children: [
+                                              for (int i = 0; i < idsVideos.length; i++)
+                                                InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    //listQuestionController;
+                                                    doubleListQuestionController;
+                                                  });
+                                                  print("ENTRA INKWELL");
+                                                  print("INDICATOT ${doubleListIndicatorQ[i]}");
+                                                  print("INDICATOT ${doubleListQuestionController[i].length}");
+
+                                                  if (doubleListIndicatorQ[i].last >= 0 && doubleListQuestionController[i].last.text.isNotEmpty && doubleListAlternative1Controller[i].last.text.isNotEmpty &&
+                                                      doubleListAlternative2Controller[i].last.text.isNotEmpty && doubleListAlternative3Controller[i].last.text.isNotEmpty &&
+                                                      doubleListAlternative4Controller[i].last.text.isNotEmpty && doubleListAnswerController[i].last.text.isNotEmpty) {
+                                                    print("ANADIR QUESTION");
+                                                    print(doubleListAlternative1Controller[i].lastWhere((element) => element.text.isNotEmpty).text);
+                                                    saveQuestion(doubleListQuestionController[i].lastWhere((element) => element.text.isNotEmpty).text,
+                                                        doubleListAlternative1Controller[i].lastWhere((element) => element.text.isNotEmpty).text,
+                                                        doubleListAlternative2Controller[i].lastWhere((element) => element.text.isNotEmpty).text,
+                                                        doubleListAlternative3Controller[i].lastWhere((element) => element.text.isNotEmpty).text,
+                                                        doubleListAlternative4Controller[i].lastWhere((element) => element.text.isNotEmpty).text,
+                                                        doubleListAnswerController[i].lastWhere((element) => element.text.isNotEmpty).text,
+                                                        idsExams[i].toString(), i);
+                                                    //saveQuestion(listAlternative1Controller.last.text, listAlternative2Controller.last.text, listAlternative3Controller.last.text, listAlternative4Controller.last.text, listAnswerController.last.text, idsExams[i].toString());
+                                                    doubleListQuestionController[i].add(TextEditingController());
+                                                    doubleListAlternative1Controller[i].add(TextEditingController());
+                                                    doubleListAlternative2Controller[i].add(TextEditingController());
+                                                    doubleListAlternative3Controller[i].add(TextEditingController());
+                                                    doubleListAlternative4Controller[i].add(TextEditingController());
+                                                    doubleListAnswerController[i].add(TextEditingController());
+                                                    addQuestion(doubleListQuestionController[i].last, doubleListAlternative1Controller[i].last, doubleListAlternative2Controller[i].last,
+                                                        doubleListAlternative3Controller[i].last, doubleListAlternative4Controller[i].last, doubleListAnswerController[i].last, i);
+                                                    print("FILTRO VIDEO" + _contentsV.length.toString());
+                                                    print("sas" + doubleListAnswerController[i].length.toString());
+                                                    setState(() {
+                                                      //widgetQuestion;
+                                                      doubleListQuestion;
+                                                    });
+                                                  } else {
+                                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                                      content: Text("Completar todos los campos para agregar una pregunta"),
+                                                    ));
+                                                  }
+
+                                                  // if (listIndicatorQ[i] >= 0 && listQuestionController[i].text.isNotEmpty && listAlternative1Controller[i].text.isNotEmpty &&
+                                                  // listAlternative2Controller[i].text.isNotEmpty && listAlternative3Controller[i].text.isNotEmpty &&
+                                                  // listAlternative4Controller[i].text.isNotEmpty && listAnswerController[i].text.isNotEmpty) {
+                                                  //   print("ANADIR QUESTION");
+                                                  //   print(listAlternative1Controller.lastWhere((element) => element.text.isNotEmpty).text);
+                                                  //   saveQuestion(listAlternative1Controller.lastWhere((element) => element.text.isNotEmpty).text,
+                                                  //       listAlternative2Controller.lastWhere((element) => element.text.isNotEmpty).text,
+                                                  //       listAlternative3Controller.lastWhere((element) => element.text.isNotEmpty).text,
+                                                  //       listAlternative4Controller.lastWhere((element) => element.text.isNotEmpty).text,
+                                                  //       listAnswerController.lastWhere((element) => element.text.isNotEmpty).text,
+                                                  //       idsExams[i].toString());
+                                                  //   //saveQuestion(listAlternative1Controller.last.text, listAlternative2Controller.last.text, listAlternative3Controller.last.text, listAlternative4Controller.last.text, listAnswerController.last.text, idsExams[i].toString());
+                                                  //   listQuestionController.add(TextEditingController());
+                                                  //   listAlternative1Controller.add(TextEditingController());
+                                                  //   listAlternative2Controller.add(TextEditingController());
+                                                  //   listAlternative3Controller.add(TextEditingController());
+                                                  //   listAlternative4Controller.add(TextEditingController());
+                                                  //   listAnswerController.add(TextEditingController());
+                                                  //   addQuestion(listQuestionController.last, listAlternative1Controller.last, listAlternative2Controller.last, listAlternative3Controller.last, listAlternative4Controller.last, listAnswerController.last, i);
+                                                  //   print("FILTRO VIDEO" + _contentsV.length.toString());
+                                                  //   print(listAnswerController.length.toString());
+                                                  //   setState(() {
+                                                  //     //widgetQuestion;
+                                                  //     doubleListQuestion;
+                                                  //   });
+                                                  // } else {
+                                                  //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                                  //     content: Text("Completar todos los campos para agregar una pregunta"),
+                                                  //   ));
+                                                  // }
+                                                },
+                                                child: Container(
+                                                  padding: EdgeInsets.all(20),
+                                                  decoration: const BoxDecoration(
+                                                      border: Border(bottom: BorderSide(width: 1, color: Colors.grey))
+                                                  ),
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: Text('Video ${i+1}', style: TextStyle(fontSize: 16, color: Color(0xff2E3E5C), fontWeight: FontWeight.bold)),
+                                                      ),
+                                                      Icon(Icons.add_box, color: Colors.green)
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                );
+                                
+                                // if (indicatorQ >= 0 && questionController.text.isNotEmpty && alternative1Controller.text.isNotEmpty
+                                // && alternative2Controller.text.isNotEmpty && alternative3Controller.text.isNotEmpty
+                                // && alternative4Controller.text.isNotEmpty && answerController.text.isNotEmpty) {
+                                //   addQuestion(TextEditingController(), TextEditingController(), TextEditingController(), TextEditingController(), TextEditingController(), TextEditingController());
+                                //   print("FILTRO VIDEO" + _contentsV.length.toString());
+                                //   setState(() {
+                                //     //widgetQuestion;
+                                //     doubleListQuestion;
+                                //   });
+                                // } else {
+                                //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                //     content: Text("Completar todos los campos para agregar una pregunta"),
+                                //   ));
+                                // }
 
                               },
                               icon: const Icon(Icons.add_box, color: Colors.green),
@@ -1813,42 +2084,133 @@ class _AddMyCourseScreenState extends State<AddMyCourseScreen> {
                       const SizedBox(
                         height: 30,
                       ),
+                      //for (int i = 0; i < idsVideos.length; i++)
+                      // SizedBox(
+                      //   height: 400,
+                      //   child: GridView.count(
+                      //       childAspectRatio: 0.85,
+                      //       crossAxisSpacing: 5,
+                      //       mainAxisSpacing: 5,
+                      //       crossAxisCount: 1,
+                      //       children: List.generate(doubleListQuestion.length, (index) {
+                      //           return SingleChildScrollView (
+                      //           child: Column(
+                      //             children: [
+                      //               Text('Video ${index + 1}', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 24)),
+                      //               const SizedBox(height: 10),
+                      //               Column(
+                      //                 children: List.generate(doubleListQuestion[index].length, (aux) {
+                      //                   return Container(
+                      //                     child: doubleListQuestion[index][aux],
+                      //                   );
+                      //                 }),
+                      //               )
+                      //             ]
+                      //           )
+                      //         );
+                      //       })
+                      //       // children: List.generate(widgetQuestion.length, (index) {
+                      //       //   return Container (
+                      //       //     child: widgetQuestion[index],
+                      //       //   );
+                      //       // })
+                      //   ),
+                      // ),
 
                       for (int i = 0; i < idsVideos.length; i++)
                         SizedBox(
-                        height: 400,
+                        height: 350,
                         child: GridView.count(
-                            childAspectRatio: 1,
+                            childAspectRatio: 8,
                             crossAxisSpacing: 5,
                             mainAxisSpacing: 5,
                             crossAxisCount: 1,
-                            children: List.generate(doubleListQuestion.length, (index) {
-                                return SingleChildScrollView (
-                                child: Column(
-                                  children: [
-                                    Text('Video $i', style: const TextStyle(fontWeight: FontWeight.w900)),
-                                    SizedBox(height: 10),
-                                    Column(
-                                      children: List.generate(doubleListQuestion[index].length, (aux) {
-                                        return Container(
-                                          child: doubleListQuestion[index][aux],
-                                        );
-                                      }),
-                                    )
-                                  ]
-                                )
+                            children: List.generate(doubleListQuestion[i].length, (aux) {
+                              return Container(
+                                child: doubleListQuestion[i][aux],
                               );
-                            })
-                            // children: List.generate(widgetQuestion.length, (index) {
-                            //   return Container (
-                            //     child: widgetQuestion[index],
-                            //   );
-                            // })
+                            }),
                         ),
                       ),
 
-                      Text(idsD.toString() + "ELIMIANDOS"),
-                      Text(idsVideos.toString() + "TODOS"),
+                      Text(idsVideos.toString() + "TODOS" + doubleListQuestion[0].length.toString()),
+                      //show(),
+
+                      // SizedBox(
+                      //   height: 400,
+                      //   child: GridView.count(
+                      //       childAspectRatio: 0.85,
+                      //       crossAxisSpacing: 5,
+                      //       mainAxisSpacing: 5,
+                      //       crossAxisCount: 1,
+                      //       children: [
+                      //         Text('Video ${1}', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 24)),
+                      //         const SizedBox(height: 10),
+                      //         Column(
+                      //           children: List.generate(doubleListQuestion[0].length, (aux) {
+                      //             return Container(
+                      //               child: doubleListQuestion[0][aux],
+                      //             );
+                      //           }),
+                      //         )
+                      //       ]
+                      //     // List.generate(doubleListQuestion.length, (index) {
+                      //     //   return SingleChildScrollView (
+                      //     //       child: Column(
+                      //     //           children: [
+                      //     //             Text('Video ${index + 1}', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 24)),
+                      //     //             const SizedBox(height: 10),
+                      //     //             Column(
+                      //     //               children: List.generate(doubleListQuestion[index].length, (aux) {
+                      //     //                 return Container(
+                      //     //                   child: doubleListQuestion[index][aux],
+                      //     //                 );
+                      //     //               }),
+                      //     //             )
+                      //     //           ]
+                      //     //       )
+                      //     //   );
+                      //     // })
+                      //   ),
+                      // ),
+                      //
+                      // SizedBox(
+                      //   height: 400,
+                      //   child: GridView.count(
+                      //       childAspectRatio: 0.85,
+                      //       crossAxisSpacing: 5,
+                      //       mainAxisSpacing: 5,
+                      //       crossAxisCount: 1,
+                      //       children: [
+                      //         Text('Video ${2}', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 24)),
+                      //         const SizedBox(height: 10),
+                      //         Column(
+                      //           children: List.generate(doubleListQuestion[1].length, (aux) {
+                      //             return Container(
+                      //               child: doubleListQuestion[1][aux],
+                      //             );
+                      //           }),
+                      //         )
+                      //       ]
+                      //     // List.generate(doubleListQuestion.length, (index) {
+                      //     //   return SingleChildScrollView (
+                      //     //       child: Column(
+                      //     //           children: [
+                      //     //             Text('Video ${index + 1}', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 24)),
+                      //     //             const SizedBox(height: 10),
+                      //     //             Column(
+                      //     //               children: List.generate(doubleListQuestion[index].length, (aux) {
+                      //     //                 return Container(
+                      //     //                   child: doubleListQuestion[index][aux],
+                      //     //                 );
+                      //     //               }),
+                      //     //             )
+                      //     //           ]
+                      //     //       )
+                      //     //   );
+                      //     // })
+                      //   ),
+                      // ),
 
                     ],
                   ),
@@ -1869,11 +2231,20 @@ class _AddMyCourseScreenState extends State<AddMyCourseScreen> {
   }
 
   continued1(){
-    _currentStep < 3 ?
-    setState(() => _currentStep += 1): null;
     int idCat = int.parse(dropdownValue);
-    saveThematic(nameThematicController.text, idCat, descriptionController.text, portraitController.text, int.parse(nivelController.text), int.parse(minCalificationController.text), int.parse(starRateController.text), int.parse(nTimeController.text), int.parse(nBagdeController.text));
+    print("hola" + idCat.toString());
+    print("hola" + nivelController.text);
+    if (nivelController.text.isNotEmpty && minCalificationController.text.isNotEmpty && starRateController.text.isNotEmpty
+    && nTimeController.text.isNotEmpty && nBagdeController.text.isNotEmpty) {
+      saveThematic(nameThematicController.text, idCat, descriptionController.text, portraitController.text, int.parse(nivelController.text), int.parse(minCalificationController.text), int.parse(starRateController.text), int.parse(nTimeController.text), int.parse(nBagdeController.text));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Completar todos los campos para continuar"),
+      ));
+    }
 
+    // _currentStep < 3 ?
+    // setState(() => _currentStep += 1): null;
     // setState(() {
     //   _currentStep += 1;
     // });
@@ -1881,16 +2252,262 @@ class _AddMyCourseScreenState extends State<AddMyCourseScreen> {
   }
 
   continued2(){
+
+    doubleListIndicatorQ.clear();
+    doubleListQuestionController.clear();
+    doubleListAlternative1Controller.clear();
+    doubleListAlternative2Controller.clear();
+    doubleListAlternative3Controller.clear();
+    doubleListAlternative4Controller.clear();
+    doubleListAnswerController.clear();
+    doubleListQuestion.clear();
+
+    idsQuestions.clear();
+
+    print("length" + idsVideos.length.toString());
+    for (int i = 0; i < idsVideos.length; i++) {
+      doubleListIndicatorQ.add([0]);
+      idsQuestions.add([0]);
+      doubleListQuestionController.add([TextEditingController()]);
+      doubleListAlternative1Controller.add([TextEditingController()]);
+      doubleListAlternative2Controller.add([TextEditingController()]);
+      doubleListAlternative3Controller.add([TextEditingController()]);
+      doubleListAlternative4Controller.add([TextEditingController()]);
+      doubleListAnswerController.add([TextEditingController()]);
+      print("doubkeList");
+      print("ENTRADL" + doubleListQuestion.length.toString());
+      doubleListQuestion.add([Center(child: Text("VIDEO ${i+1}", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 24)))]);
+      doubleListQuestion[i].add(Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.question_answer, color: Colors.purple, size: 25),
+          const SizedBox(
+            width: 15,
+          ),
+          Expanded(
+              child: TextFormField(
+                controller: doubleListQuestionController[i][0],
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                    isDense: true,
+                    border: const OutlineInputBorder(),
+                    labelText: 'Pregunta',
+                    labelStyle: TextStyle(
+                      color: AppColors.labelTextTematicaColor,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.borderTematicaColor,
+                        )),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.borderFocusedTematicaColor,
+                        ))),
+                style: TextStyle(color: AppColors.textTematicaColor),
+              )
+          ),
+          IconButton(
+              onPressed: () {
+                if (doubleListQuestionController[i].first.text.isNotEmpty && doubleListAlternative1Controller[i].first.text.isNotEmpty &&
+                    doubleListAlternative2Controller[i].first.text.isNotEmpty && doubleListAlternative3Controller[i].first.text.isNotEmpty &&
+                    doubleListAlternative4Controller[i].first.text.isNotEmpty) {
+                  //listIndicatorQ[i] -= 1;
+                  doubleListIndicatorQ[i].add(doubleListIndicatorQ[i].last - 1);
+                  setState(() {
+                    print("ENTROO");
+                    //widgetQuestion.removeRange(0, 6);
+                    print(doubleListQuestion[i].length);
+                    doubleListQuestion[i].removeRange(1,7);
+                    deleteQuestion(idsQuestions[i].last.toString());
+                  });
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text("Agregar la pregunta y sus alternativas para eliminar"),
+                  ));
+                }
+
+                // if (listQuestionController.first.text.isNotEmpty && listAlternative1Controller.first.text.isNotEmpty &&
+                //     listAlternative2Controller.first.text.isNotEmpty && listAlternative3Controller.first.text.isNotEmpty &&
+                //     listAlternative4Controller.first.text.isNotEmpty) {
+                //   //listIndicatorQ[i] -= 1;
+                //   doubleListIndicatorQ[i].add(doubleListIndicatorQ[i].last - 1);
+                //   setState(() {
+                //     print("ENTROO");
+                //     //widgetQuestion.removeRange(0, 6);
+                //     print(doubleListQuestion[i].length);
+                //     doubleListQuestion[i].removeRange(1,7);
+                //   });
+                // } else {
+                //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                //     content: Text("Agregar la pregunta y sus alternativas para eliminar"),
+                //   ));
+                // }
+              },
+              icon: Icon(Icons.delete, color: Colors.red)
+          ),
+        ],
+      ));
+      doubleListQuestion[i].add(Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.circle_outlined, color: Colors.purple, size: 25),
+          const SizedBox(
+            width: 15,
+          ),
+          Expanded(
+              child: TextFormField(
+                controller: doubleListAlternative1Controller[i][0],
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                    isDense: true,
+                    border: const OutlineInputBorder(),
+                    labelText: 'Alternativa 1',
+                    labelStyle: TextStyle(
+                      color: AppColors.labelTextTematicaColor,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.borderTematicaColor,
+                        )),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.borderFocusedTematicaColor,
+                        ))),
+                style: TextStyle(color: AppColors.textTematicaColor),
+              )
+          ),
+        ],
+      ));
+      doubleListQuestion[i].add(Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.circle_outlined, color: Colors.purple, size: 25),
+          const SizedBox(
+            width: 15,
+          ),
+          Expanded(
+              child: TextFormField(
+                controller: doubleListAlternative2Controller[i][0],
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                    isDense: true,
+                    border: const OutlineInputBorder(),
+                    labelText: 'Alternativa 2',
+                    labelStyle: TextStyle(
+                      color: AppColors.labelTextTematicaColor,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.borderTematicaColor,
+                        )),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.borderFocusedTematicaColor,
+                        ))),
+                style: TextStyle(color: AppColors.textTematicaColor),
+              )
+          ),
+        ],
+      ));
+      doubleListQuestion[i].add(Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.circle_outlined, color: Colors.purple, size: 25),
+          const SizedBox(
+            width: 15,
+          ),
+          Expanded(
+              child: TextFormField(
+                controller: doubleListAlternative3Controller[i][0],
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                    isDense: true,
+                    border: const OutlineInputBorder(),
+                    labelText: 'Alternativa 3',
+                    labelStyle: TextStyle(
+                      color: AppColors.labelTextTematicaColor,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.borderTematicaColor,
+                        )),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.borderFocusedTematicaColor,
+                        ))),
+                style: TextStyle(color: AppColors.textTematicaColor),
+              )
+          ),
+        ],
+      ));
+      doubleListQuestion[i].add(Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.circle_outlined, color: Colors.purple, size: 25),
+          const SizedBox(
+            width: 15,
+          ),
+          Expanded(
+              child: TextFormField(
+                controller: doubleListAlternative4Controller[i][0],
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                    isDense: true,
+                    border: const OutlineInputBorder(),
+                    labelText: 'Alternativa 4',
+                    labelStyle: TextStyle(
+                      color: AppColors.labelTextTematicaColor,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.borderTematicaColor,
+                        )),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.borderFocusedTematicaColor,
+                        ))),
+                style: TextStyle(color: AppColors.textTematicaColor),
+              )
+          ),
+        ],
+      ));
+      doubleListQuestion[i].add(Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.question_answer_outlined, color: Colors.purple, size: 25),
+          const SizedBox(
+            width: 15,
+          ),
+          Expanded(
+              child: TextFormField(
+                controller: doubleListAnswerController[i][0],
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                    isDense: true,
+                    border: const OutlineInputBorder(),
+                    labelText: 'RESPUESTA  = 1, 2, 3 o 4',
+                    labelStyle: TextStyle(
+                      color: AppColors.labelTextTematicaColor,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.borderTematicaColor,
+                        )),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppColors.borderFocusedTematicaColor,
+                        ))),
+                style: TextStyle(color: AppColors.textTematicaColor),
+              )
+          ),
+        ],
+      ));
+      doubleListQuestion[i].add(const SizedBox(
+        height: 10,
+      ));
+    }
     _currentStep < 3 ?
     setState(() => _currentStep += 1): null;
-    // setState(() {
-    //   _currentStep += 1;
-    // });
-
-    // idsVideos.forEach((k, v) {
-    //   saveExam(idThematic.toString(), k.toString(), v);
-    // });
-
     print('QUE TAL THEMTIC + ' + idThematic.toString());
   }
 
@@ -1900,13 +2517,18 @@ class _AddMyCourseScreenState extends State<AddMyCourseScreen> {
     // setState(() {
     //   _currentStep += 1;
     // });
-    //thematic.status = 1;
+    thematicData.status = 0;
+    Navigator.pushNamed(context, Routes.actionsMyCourses);
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text("Se agrego correctamente"),
+    ));
      print('HOLAAA');
   }
 
   cancel1(){
     _currentStep > 0 ?
     setState(() => _currentStep -= 0) : null;
+    Navigator.pushNamed(context, Routes.actionsMyCourses);
   }
 
   cancel2(){

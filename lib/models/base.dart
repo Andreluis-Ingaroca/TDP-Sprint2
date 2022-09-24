@@ -1,5 +1,5 @@
 class BaseModel {
-  int status;
+  int? status = 1;
 
   BaseModel(
     this.status,

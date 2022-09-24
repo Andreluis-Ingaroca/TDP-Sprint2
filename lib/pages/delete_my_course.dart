@@ -18,6 +18,7 @@ class _DeleteMyCourseScreenState extends State<DeleteMyCourseScreen> {
 
   late List<ThematicUnitModel> _thematics;
   Map<int, String> filtrados = {};
+  Map<int, ThematicUnitModel> thematicObj = {};
   Map<int, String> saveFilter = {};
   late final Future _future;
 
@@ -29,6 +30,7 @@ class _DeleteMyCourseScreenState extends State<DeleteMyCourseScreen> {
       _thematics = shared.SharedService().getTUnits(value),
       for (ThematicUnitModel t in _thematics) {
         filtrados[t.idThematicUnit] = t.thematicUnitName,
+        thematicObj[t.idThematicUnit] = t,
       },
     });
 

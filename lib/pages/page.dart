@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:lexp/core/res/app.dart';
 import 'package:lexp/core/res/color.dart';
 import 'package:lexp/models/content.dart';
+import 'package:lexp/models/notes.dart';
 import 'package:lexp/models/user.dart';
 import 'package:lexp/models/user_unity.dart';
 import 'package:lexp/services/shared_service.dart' as shared;
 import 'package:lexp/services/rest_provider.dart' as rest;
+import 'package:lexp/widgets/gradient_text.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-import 'package:logger/logger.dart';
 
 class PageScreen extends StatefulWidget {
-  const PageScreen({super.key, this.user, this.userUnity});
+  const PageScreen({super.key, required this.user, required this.userUnity});
 
-  final UserModel? user;
-  final UserUnityModel? userUnity;
+  final UserModel user;
+  final UserUnityModel userUnity;
 
   @override
   State<StatefulWidget> createState() => _PageScreenState();
@@ -22,64 +24,62 @@ class PageScreen extends StatefulWidget {
 }
 
 class _PageScreenState extends State<PageScreen> {
-  late YoutubePlayerController _controller;
+  late YoutubePlayerController _controller = YoutubePlayerController(
+    initialVideoId: '8giBPUpzKRw',
+    flags: const YoutubePlayerFlags(
+      autoPlay: false,
+      mute: false,
+    ),
+  );
   late TextEditingController _idController;
   late TextEditingController _seekToController;
   late PlayerState _playerState;
   late YoutubeMetaData _videoMetaData;
-  late String _stickyNotes;
+  late NotesModel _stickyNotes;
+  late final TextEditingController _stickyNoteController = TextEditingController(text: '');
   late final Future _future;
   late final List<ContentModel> _contents;
   late ContentModel _currentContent;
   late Duration _savedPosition;
   bool _isPlayerReady = false;
   final _formKey = GlobalKey<FormState>();
-  String endedVids = ""; //XXX
-  var _logger = Logger();
 
   void _submitCommand(int idContent) {
     final form = _formKey.currentState;
 
     if (form!.validate()) {
       form.save();
-
-      // Email & password matched our validation rules
-      // and are saved to _email and _password fields.
       _saveNotesCommand(idContent);
     }
   }
 
-  void _saveNotesCommand(int idContent) {
-    _logger.d("Saving notes");
-    var params = {
-      "data": {
-        "idUser": widget.userUnity!.idUser,
-        "idContent": idContent,
-        "notes": _stickyNotes,
-      }
-    };
+  void _saveProgress(int pos) {
+    UserUnityModel prog = widget.userUnity;
+    if (prog.advQtty < pos) {
+      //only save if the new position is greater than the old one
+      prog.advQtty = pos;
+      var params = {"data": prog.toJson()};
+      rest.RestProvider().callMethod("/uuc/sue", params).then((value) {});
+    }
   }
 
-  final List<String> _ids = [
-    '1xcSDYy3Dl4',
-    'K17df81RL9Y',
-    'F5tSoaJ93ac',
-    '7j7twuejxvU',
-    'MGe1GCVZTAA',
-  ];
+  void _saveNotesCommand(int idContent) {
+    var params = {"data": _stickyNotes.toJson()};
+    rest.RestProvider().callMethod("/nc/sn", params).then((savedNotes) {
+      _stickyNotes = NotesModel.fromJson(savedNotes.data["data"]);
+    });
+  }
 
   @override
   void initState() {
     var params = {
-      "data": {
-        //"idThematicUnit": widget.userUnity!.idThematicUnit,
-        "idThematicUnit": 2 //XXX
-      }
+      "data": {"idThematicUnit": widget.userUnity.idThematicUnit}
     };
     _future = rest.RestProvider().callMethod("/cntc/fabtui", params);
     _future.then((value) => {
           _contents = shared.SharedService().getContents(value),
-          _currentContent = _contents.first,
+          _currentContent = _contents[widget.userUnity.advQtty],
+          getNotes(),
           _controller = YoutubePlayerController(
             initialVideoId: _currentContent.multimedia,
             flags: const YoutubePlayerFlags(
@@ -93,15 +93,34 @@ class _PageScreenState extends State<PageScreen> {
             ),
           )..addListener(listener)
         });
-
     super.initState();
     _idController = TextEditingController();
     _seekToController = TextEditingController();
     _videoMetaData = const YoutubeMetaData();
     _playerState = PlayerState.unknown;
-    //TODO: fetch _stickyNotes from user
-    _stickyNotes = "";
     _savedPosition = const Duration(seconds: 0); //TODO: fetch from device
+  }
+
+  void getNotes() {
+    _stickyNotes = NotesModel(
+      AppConstants.defaultStatus,
+      _currentContent,
+      idContent: _currentContent.idContent,
+      idUxU: widget.userUnity.idUxU,
+      notes: '',
+    );
+
+    var params = {"data": _stickyNotes.toJson()};
+
+    rest.RestProvider().callMethod("/nc/gn", params).then((value) {
+      if (value.data["data"] != null) {
+        _stickyNotes = NotesModel.fromJson(value.data["data"]);
+      }
+      _stickyNoteController.value = _stickyNoteController.value.copyWith(
+        text: _stickyNotes.notes,
+        selection: TextSelection.collapsed(offset: _stickyNotes.notes.length),
+      );
+    });
   }
 
   void listener() {
@@ -184,25 +203,19 @@ class _PageScreenState extends State<PageScreen> {
                 ],
                 onReady: () {
                   _isPlayerReady = true;
-                  _logger.d('Player is ready.');
                 },
                 onEnded: (data) {
-                  endedVids += '${_videoMetaData.title}, ';
-                  _logger.i('OnEnded: ${data.videoId}');
-                  if (_contents.indexOf(_currentContent) == _contents.length - 1) {
-                    _logger.i("Last video in the list");
-                    _controller.seekTo(const Duration(seconds: 0));
-                    _controller.pause();
-                    return;
-                  }
-                  _currentContent = _contents[_contents.indexOf(_currentContent) + 1];
-                  _controller.load(_currentContent.multimedia);
+                  _controller.seekTo(const Duration(seconds: 0));
+                  _controller.pause();
+                  _saveProgress(_contents.indexOf(_currentContent) + 1);
+                  return;
                 },
               ),
               builder: (context, player) => Scaffold(
                 appBar: AppBar(
-                  title: const Text(
-                    'TODO',
+                  title: GradientText(
+                    _currentContent.contentName,
+                    gradient: AppColors.textGradient,
                   ),
                   actions: [
                     IconButton(
@@ -227,25 +240,23 @@ class _PageScreenState extends State<PageScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               IconButton(
-                                icon: const Icon(Icons.skip_previous),
+                                icon: const Icon(Icons.skip_previous, size: 37),
                                 color: AppColors.customPurple,
                                 onPressed: () {
                                   if (_isPlayerReady) {
                                     if (_contents.indexOf(_currentContent) == 0) {
-                                      _logger.i("First video in the list");
                                       _controller.seekTo(const Duration(seconds: 0));
                                       _controller.pause();
                                       return;
                                     }
                                     _currentContent = _contents[_contents.indexOf(_currentContent) - 1];
                                     _controller.load(_currentContent.multimedia);
+                                    getNotes();
                                   }
                                 },
                               ),
                               IconButton(
-                                icon: Icon(
-                                  _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                                ),
+                                icon: Icon(_controller.value.isPlaying ? Icons.pause : Icons.play_arrow, size: 37),
                                 color: AppColors.customPurple,
                                 onPressed: () {
                                   if (_isPlayerReady) {
@@ -260,40 +271,40 @@ class _PageScreenState extends State<PageScreen> {
                                 },
                               ),
                               IconButton(
-                                  icon: const Icon(Icons.skip_next),
+                                  icon: const Icon(Icons.skip_next, size: 37),
                                   color: AppColors.customPurple,
                                   onPressed: () {
                                     if (_isPlayerReady) {
                                       if (_contents.indexOf(_currentContent) == _contents.length - 1) {
-                                        _logger.i("Last video in the list");
                                         _showSnackBar("Ultimo contenido del curso");
                                         return;
                                       }
                                       _currentContent = _contents[_contents.indexOf(_currentContent) + 1];
                                       _controller.load(_currentContent.multimedia);
+                                      getNotes();
                                     }
-                                    endedVids += '${_videoMetaData.title}, ';
-                                    _logger.i('Skip Next');
                                   }),
                             ],
                           ),
-                          _space,
-                          /* AnimatedContainer(
-                    duration: const Duration(milliseconds: 800),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.0),
-                      color: _getStateColor(_playerState),
-                    ),
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      _playerState.toString(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w300,
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ), */
+                          AppConstants.space,
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 800),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20.0),
+                              color: AppColors.customPurple,
+                            ),
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              _playerState.toString(),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w300,
+                                color: Colors.white,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Placeholder(),
+                          //_examBuilder(_currentContent),
                           //TODO: EXAMEN // 4 opciones //examen //n preguntas //preguntas -> id correcta
                         ],
                       ),
@@ -304,10 +315,11 @@ class _PageScreenState extends State<PageScreen> {
             );
           } else {
             return Container(
+                color: AppColors.drawerColor,
                 child: SpinKitFadingCube(
-              color: AppColors.customPurple,
-              size: 42.0,
-            ));
+                  color: AppColors.customPurple,
+                  size: 42.0,
+                ));
           }
         });
   }
@@ -333,32 +345,6 @@ class _PageScreenState extends State<PageScreen> {
     );
   }
 
-  Color _getStateColor(PlayerState state) {
-    switch (state) {
-      case PlayerState.unknown:
-        return Colors.grey[700]!;
-      case PlayerState.unStarted:
-        return Colors.pink;
-      case PlayerState.ended:
-        endedVids += '${_videoMetaData.title}, ';
-        _logger.i('ended');
-        return Colors.red;
-      case PlayerState.playing:
-        return Colors.blueAccent;
-      case PlayerState.paused:
-        _logger.i('paused');
-        return Colors.orange;
-      case PlayerState.buffering:
-        return Colors.yellow;
-      case PlayerState.cued:
-        return Colors.blue[900]!;
-      default:
-        return Colors.blue;
-    }
-  }
-
-  Widget get _space => const SizedBox(height: 10);
-
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -380,16 +366,6 @@ class _PageScreenState extends State<PageScreen> {
     );
   }
 
-  bool checkLastFirstVideo(String videoID) {
-    if (videoID == _ids.first) {
-      return true;
-    } else if (videoID == _ids.last) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   void _showStickyNotes() {
     showModalBottomSheet(
       isScrollControlled: true,
@@ -407,29 +383,30 @@ class _PageScreenState extends State<PageScreen> {
                         children: <Widget>[
                           Column(
                             children: [
-                              _space,
+                              AppConstants.space,
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                                 child: Text('Notas de la clase',
                                     style: TextStyle(color: AppColors.customPurple, fontSize: 20, fontWeight: FontWeight.bold)),
                               ),
-                              _space,
+                              AppConstants.space,
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
-                                  autofocus: true,
+                                  validator: (value) => value!.isEmpty ? 'Ingrese una nota' : null,
+                                  controller: _stickyNoteController,
                                   decoration: const InputDecoration(
                                     hintText: 'Escribe aquí tus notas',
                                     border: InputBorder.none,
                                   ),
                                   onSaved: (value) {
-                                    _stickyNotes = value!;
+                                    _stickyNotes.notes = value!;
                                   },
                                   maxLines: null,
                                   keyboardType: TextInputType.multiline,
                                 ),
                               ),
-                              _space,
+                              AppConstants.space,
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
@@ -467,4 +444,45 @@ class _PageScreenState extends State<PageScreen> {
       },
     );
   }
+
+  /* Widget _examBuilder(final ContentModel data) {
+    ExamModel exam = data.listOfExamen!;
+    return Column( //TODO
+      children: [
+        AppConstants.space,
+        Text(
+          'Examen',
+          style: TextStyle(color: AppColors.customPurple, fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        AppConstants.space,
+        /* Text(
+          'Preguntas: ${exam.listOfPreguntas!.length}',
+          style: TextStyle(color: AppColors.customPurple, fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        AppConstants.space,
+        Text(
+          'Respuestas: ${exam.listOfPreguntas![0].listOfRespuestas!.length}',
+          style: TextStyle(color: AppColors.customPurple, fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        AppConstants.space,
+        Text(
+          'Respuesta correcta: ${exam.listOfPreguntas![0].listOfRespuestas![0].idRespuesta}',
+          style: TextStyle(color: AppColors.customPurple, fontSize: 16, fontWeight: FontWeight.bold),
+        ), */
+        AppConstants.space,
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.customPurple,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(32.0),
+            ),
+          ),
+          onPressed: () {
+            _showStickyNotes();
+          },
+          child: const Text('Responder'),
+        ),
+      ],
+    );
+  } */
 }

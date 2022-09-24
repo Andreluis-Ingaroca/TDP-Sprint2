@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:lexp/core/res/color.dart';
 
 class BlockMenuContainer extends StatelessWidget {
@@ -15,7 +17,7 @@ class BlockMenuContainer extends StatelessWidget {
     required this.icon,
     required this.blockTittle,
     this.blockSubLabel = '',
-    this.onTap, //remove from Explorar, Insignias
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -79,5 +81,43 @@ class BlockMenuContainer extends StatelessWidget {
             ],
           ),
         ));
+  }
+}
+
+class TinyBlockContainer extends StatelessWidget {
+  final Color color;
+  final String image;
+  final String blockTittle;
+
+  const TinyBlockContainer({super.key, required this.color, required this.image, required this.blockTittle});
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            spreadRadius: 0.2,
+            //   offset: const Offset(2, 2),
+          )
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: CachedNetworkImage(
+          imageUrl: image,
+          placeholder: (context, url) => SpinKitFadingCube(
+            color: AppColors.customPurple,
+            size: 30,
+          ),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+        ),
+      ),
+    );
   }
 }

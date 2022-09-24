@@ -96,193 +96,110 @@ class AppColors {
 
   static MaterialColor customPink = MaterialColor(0xFFE101EF, colorCustomPink);
   static MaterialColor customCyan = MaterialColor(0xFF00FFFF, colorCustomCyan);
-  static MaterialColor customPurple =
-      MaterialColor(0xFF8E51EC, colorCustomPurple);
-  static MaterialColor customCyanPink =
-      MaterialColor(0xFF1DF5E8, colorCustomCyanPink);
-  static MaterialColor customPinkCyan =
-      MaterialColor(0xFFDE01EF, colorCustomPinkCyan);
+  static MaterialColor customPurple = MaterialColor(0xFF8E51EC, colorCustomPurple);
+  static MaterialColor customCyanPink = MaterialColor(0xFF1DF5E8, colorCustomCyanPink);
+  static MaterialColor customPinkCyan = MaterialColor(0xFFDE01EF, colorCustomPinkCyan);
   static MaterialColor customGrey = MaterialColor(0xFF787878, colorCustomGrey);
-  static MaterialColor customGreyBlueGrey =
-      MaterialColor(0xFF616161, colorCustomBlueGrey);
+  static MaterialColor customGreyBlueGrey = MaterialColor(0xFF616161, colorCustomBlueGrey);
 
-  static LinearGradient get iniciarGradient => isDarkMode
-      ? getLinearGradient(customPurple)
-      : getLinearGradient(customPinkCyan);
-  static LinearGradient get registerGradient => isDarkMode
-      ? getLinearGradient(customPurple)
-      : getLinearGradient(customCyanPink);
+  static LinearGradient get textGradient => isDarkMode ? getLinearGradient(customPurple) : getLinearGradient(customPinkCyan);
 
   static Color get primaryColor => const Color.fromARGB(255, 205, 15, 239);
   static Color get secondaryColor => const Color.fromARGB(255, 53, 239, 232);
 
   static Color get bienvenidoColor => isDarkMode ? Colors.white : Colors.black;
-  static Color get bienvenidoContentColor =>
-      isDarkMode ? Colors.white70 : Colors.black54;
-  static Color get borderEmailColor =>
-      isDarkMode ? Colors.white70 : Colors.grey;
-  static Color get borderFocusedEmailColor =>
-      isDarkMode ? Colors.white : Colors.black87;
+  static Color get bienvenidoContentColor => isDarkMode ? Colors.white70 : Colors.black54;
+  static Color get borderEmailColor => isDarkMode ? Colors.white70 : Colors.grey;
+  static Color get borderFocusedEmailColor => isDarkMode ? Colors.white : Colors.black87;
   static Color get textEmailColor => isDarkMode ? Colors.white : Colors.black;
-  static Color get labelTextEmailColor =>
-      isDarkMode ? Colors.white70 : Colors.grey[500]!;
-  static Color get borderPasswordColor =>
-      isDarkMode ? Colors.white70 : Colors.grey;
-  static Color get borderFocusedPasswordColor =>
-      isDarkMode ? Colors.white : Colors.black87;
-  static Color get textPasswordColor =>
-      isDarkMode ? Colors.white : Colors.black;
-  static Color get labelTextPasswordColor =>
-      isDarkMode ? Colors.white70 : Colors.grey[500]!;
-  static Color get contentRegisterColor =>
-      isDarkMode ? Colors.white70 : Colors.black87;
+  static Color get labelTextEmailColor => isDarkMode ? Colors.white70 : Colors.grey[500]!;
+  static Color get borderPasswordColor => isDarkMode ? Colors.white70 : Colors.grey;
+  static Color get borderFocusedPasswordColor => isDarkMode ? Colors.white : Colors.black87;
+  static Color get textPasswordColor => isDarkMode ? Colors.white : Colors.black;
+  static Color get labelTextPasswordColor => isDarkMode ? Colors.white70 : Colors.grey[500]!;
+  static Color get contentRegisterColor => isDarkMode ? Colors.white70 : Colors.black87;
   static Color get registerColor => isDarkMode ? Colors.white : Colors.cyan;
-  static Color get iniciarSesionColor =>
-      isDarkMode ? Colors.white : Colors.deepPurple;
-  static Color get borderCategoriaColor =>
-      isDarkMode ? Colors.white70 : Colors.grey;
-  static Color get borderFocusedCategoriaColor =>
-      isDarkMode ? Colors.white : Colors.black87;
+  static Color get iniciarSesionColor => isDarkMode ? Colors.white : Colors.deepPurple;
+  static Color get borderCategoriaColor => isDarkMode ? Colors.white70 : Colors.grey;
+  static Color get borderFocusedCategoriaColor => isDarkMode ? Colors.white : Colors.black87;
   static Color get textCategoriaColor => isDarkMode ? Colors.white : Colors.black;
-  static Color get labelTextCategoriaColor =>
-      isDarkMode ? Colors.white70 : Colors.grey[500]!;
-  static Color get borderTematicaColor =>
-      isDarkMode ? Colors.white70 : Colors.grey;
-  static Color get borderFocusedTematicaColor =>
-      isDarkMode ? Colors.white : Colors.black87;
+  static Color get labelTextCategoriaColor => isDarkMode ? Colors.white70 : Colors.grey[500]!;
+  static Color get borderTematicaColor => isDarkMode ? Colors.white70 : Colors.grey;
+  static Color get borderFocusedTematicaColor => isDarkMode ? Colors.white : Colors.black87;
   static Color get textTematicaColor => isDarkMode ? Colors.white : Colors.black;
-  static Color get labelTextTematicaColor =>
-      isDarkMode ? Colors.white70 : Colors.grey[500]!;
+  static Color get labelTextTematicaColor => isDarkMode ? Colors.white70 : Colors.grey[500]!;
 
-  static Color get ingresarDatosColor =>
-      isDarkMode ? Colors.white : Colors.black;
-  static Color get ingresarContentColor =>
-      isDarkMode ? Colors.white70 : Colors.black54;
-  static Color get borderNameRegisterColor =>
-      isDarkMode ? Colors.white70 : Colors.grey;
-  static Color get borderFocusedNameRegisterColor =>
-      isDarkMode ? Colors.white : Colors.black87;
-  static Color get textNameRegisterColor =>
-      isDarkMode ? Colors.white : Colors.black;
-  static Color get labelTextNameRegisterColor =>
-      isDarkMode ? Colors.white70 : Colors.grey[500]!;
-  static Color get borderEmailRegisterColor =>
-      isDarkMode ? Colors.white70 : Colors.grey;
-  static Color get borderFocusedEmailRegisterColor =>
-      isDarkMode ? Colors.white : Colors.black87;
-  static Color get textEmailRegisterColor =>
-      isDarkMode ? Colors.white : Colors.black;
-  static Color get labelTextEmailRegisterColor =>
-      isDarkMode ? Colors.white70 : Colors.grey[500]!;
-  static Color get borderPasswordRegisterColor =>
-      isDarkMode ? Colors.white70 : Colors.grey;
-  static Color get borderFocusedPasswordRegisterColor =>
-      isDarkMode ? Colors.white : Colors.black87;
-  static Color get textPasswordRegisterColor =>
-      isDarkMode ? Colors.white : Colors.black;
-  static Color get labelTextPasswordRegisterColor =>
-      isDarkMode ? Colors.white70 : Colors.grey[500]!;
-  static Color get borderConfirmPasswordRegisterColor =>
-      isDarkMode ? Colors.white70 : Colors.grey;
-  static Color get borderFocusedConfirmPasswordRegisterColor =>
-      isDarkMode ? Colors.white : Colors.black87;
-  static Color get textConfirmPasswordRegisterColor =>
-      isDarkMode ? Colors.white : Colors.black;
-  static Color get labelTextConfirmPasswordRegisterColor =>
-      isDarkMode ? Colors.white70 : Colors.grey[500]!;
+  static Color get ingresarDatosColor => isDarkMode ? Colors.white : Colors.black;
+  static Color get ingresarContentColor => isDarkMode ? Colors.white70 : Colors.black54;
+  static Color get borderNameRegisterColor => isDarkMode ? Colors.white70 : Colors.grey;
+  static Color get borderFocusedNameRegisterColor => isDarkMode ? Colors.white : Colors.black87;
+  static Color get textNameRegisterColor => isDarkMode ? Colors.white : Colors.black;
+  static Color get labelTextNameRegisterColor => isDarkMode ? Colors.white70 : Colors.grey[500]!;
+  static Color get borderEmailRegisterColor => isDarkMode ? Colors.white70 : Colors.grey;
+  static Color get borderFocusedEmailRegisterColor => isDarkMode ? Colors.white : Colors.black87;
+  static Color get textEmailRegisterColor => isDarkMode ? Colors.white : Colors.black;
+  static Color get labelTextEmailRegisterColor => isDarkMode ? Colors.white70 : Colors.grey[500]!;
+  static Color get borderPasswordRegisterColor => isDarkMode ? Colors.white70 : Colors.grey;
+  static Color get borderFocusedPasswordRegisterColor => isDarkMode ? Colors.white : Colors.black87;
+  static Color get textPasswordRegisterColor => isDarkMode ? Colors.white : Colors.black;
+  static Color get labelTextPasswordRegisterColor => isDarkMode ? Colors.white70 : Colors.grey[500]!;
+  static Color get borderConfirmPasswordRegisterColor => isDarkMode ? Colors.white70 : Colors.grey;
+  static Color get borderFocusedConfirmPasswordRegisterColor => isDarkMode ? Colors.white : Colors.black87;
+  static Color get textConfirmPasswordRegisterColor => isDarkMode ? Colors.white : Colors.black;
+  static Color get labelTextConfirmPasswordRegisterColor => isDarkMode ? Colors.white70 : Colors.grey[500]!;
 
   static MaterialColor get primarySwatch => Colors.purple;
   static Color get accentColor => isDarkMode ? primaryColor : Colors.grey[600]!;
   static Color get bgColor => isDarkMode ? Colors.black : Colors.grey[50]!;
-  static Color get degradedImage1Color =>
-      isDarkMode ? const Color.fromARGB(255, 82, 1, 97) : primaryColor;
-  static Color get degradedImage2Color =>
-      isDarkMode ? const Color.fromARGB(255, 8, 153, 148) : secondaryColor;
-  static Color get arrowForwardColor =>
-      isDarkMode ? Colors.purple : Colors.white;
-  static Color get optLabelColor =>
-      isDarkMode ? Colors.white70 : Colors.blueGrey[700]!;
+  static Color get degradedImage1Color => isDarkMode ? const Color.fromARGB(255, 82, 1, 97) : primaryColor;
+  static Color get degradedImage2Color => isDarkMode ? const Color.fromARGB(255, 8, 153, 148) : secondaryColor;
+  static Color get arrowForwardColor => isDarkMode ? Colors.purple : Colors.white;
+  static Color get optLabelColor => isDarkMode ? Colors.white70 : Colors.blueGrey[700]!;
   static Color get cerrarSesionColor => isDarkMode ? Colors.white : Colors.grey;
-  static Color get iconCerrarColor =>
-      isDarkMode ? Colors.white70 : Colors.black45;
-  static Color get dialogCerrarColor =>
-      isDarkMode ? Colors.white : Colors.black;
-  static Color get dialogContentColor =>
-      isDarkMode ? Colors.white70 : Colors.black;
-  static Color get buttomCancelarColor =>
-      isDarkMode ? Colors.purple : Colors.indigo;
-  static Color get buttomAceptarColor =>
-      isDarkMode ? Colors.purple : Colors.indigo;
+  static Color get iconCerrarColor => isDarkMode ? Colors.white70 : Colors.black45;
+  static Color get dialogCerrarColor => isDarkMode ? Colors.white : Colors.black;
+  static Color get dialogContentColor => isDarkMode ? Colors.white70 : Colors.black;
+  static Color get buttomCancelarColor => isDarkMode ? Colors.purple : Colors.indigo;
+  static Color get buttomAceptarColor => isDarkMode ? Colors.purple : Colors.indigo;
   static Color get dialogColor => isDarkMode ? Colors.black : Colors.white;
 
-  static MaterialColor get searchColor =>
-      isDarkMode ? Colors.purple : Colors.pink;
+  static MaterialColor get searchColor => isDarkMode ? Colors.purple : Colors.pink;
 
-  static Color get continuarAprendiendoColor =>
-      isDarkMode ? Colors.white : Colors.blueGrey[900]!;
+  static Color get continuarAprendiendoColor => isDarkMode ? Colors.white : Colors.blueGrey[900]!;
   static Color get fechaColor => isDarkMode ? Colors.white : Colors.grey[600]!;
-  static Color get enProgresoColor =>
-      isDarkMode ? Colors.white : Colors.blueGrey[900]!;
-  static Color get addCircleColor =>
-      isDarkMode ? Colors.purple : const Color.fromARGB(255, 134, 92, 236);
-  static Color get verTodoColor =>
-      isDarkMode ? Colors.white : const Color.fromARGB(255, 205, 15, 239);
-  static Color get creditoHipotecarioColor =>
-      isDarkMode ? Colors.black : Colors.blueGrey[700]!;
-  static Color get containerCreditoColor =>
-      isDarkMode ? Colors.grey[100]! : Colors.white;
-  static Color get tiempoColor =>
-      isDarkMode ? Colors.grey[900]! : Colors.grey[600]!;
-  static Color get timeLapseColor =>
-      isDarkMode ? Colors.grey[900]! : Colors.purple[300]!;
+  static Color get enProgresoColor => isDarkMode ? Colors.white : Colors.blueGrey[900]!;
+  static Color get addCircleColor => isDarkMode ? Colors.purple : const Color.fromARGB(255, 134, 92, 236);
+  static Color get verTodoColor => isDarkMode ? Colors.white : const Color.fromARGB(255, 205, 15, 239);
+  static Color get creditoHipotecarioColor => isDarkMode ? Colors.black : Colors.blueGrey[700]!;
+  static Color get containerCreditoColor => isDarkMode ? Colors.grey[100]! : Colors.white;
+  static Color get tiempoColor => isDarkMode ? Colors.grey[900]! : Colors.grey[600]!;
+  static Color get timeLapseColor => isDarkMode ? Colors.grey[900]! : Colors.purple[300]!;
   static Color get completadoColor => isDarkMode ? Colors.white : Colors.purple;
-  static Color get containerCompletadoColor =>
-      isDarkMode ? Colors.grey[700]! : Colors.purple[50]!;
-  static Color get currencyExchangeColor =>
-      isDarkMode ? Colors.grey[900]! : Colors.orange;
+  static Color get containerCompletadoColor => isDarkMode ? Colors.grey[700]! : Colors.purple[50]!;
+  static Color get currencyExchangeColor => isDarkMode ? Colors.grey[900]! : Colors.orange;
   static Color get drawerColor => isDarkMode ? Colors.black87 : Colors.white;
-  static Color get textActionsCoursesColor =>
-      isDarkMode ? Colors.white: Colors.black;
+  static Color get textActionsCoursesColor => isDarkMode ? Colors.white : Colors.black;
 
-  static MaterialColor customMisCategorias =
-    MaterialColor(0xFFADD8E6, colorCustomBlueGrey);
-  static MaterialColor get misCategoriasColor =>
-      isDarkMode ? customMisCategorias : Colors.blue;
-  static MaterialColor customMisCursos =
-      MaterialColor(0xFFFFB6C1, colorCustomBlueGrey);
-  static MaterialColor get misCursosColor =>
-      isDarkMode ? customMisCursos : Colors.pink;
-  static MaterialColor customExplorar =
-      MaterialColor(0xFFE0FFFF, colorCustomBlueGrey);
-  static MaterialColor get explorarColor =>
-      isDarkMode ? customExplorar : Colors.cyan;
-  static MaterialColor customInsignias =
-      MaterialColor(0xFF800080, colorCustomBlueGrey);
-  static MaterialColor get insigniasColor =>
-      isDarkMode ? customInsignias : Colors.purple;
-  static MaterialColor customBloc =
-      MaterialColor(0xFFADD8E6, colorCustomBlueGrey);
-  static MaterialColor get blocDeNotasColor =>
-      isDarkMode ? customBloc : Colors.blue;
-  static MaterialColor customTicket =
-      MaterialColor(0xFFE0FFFF, colorCustomBlueGrey);
-  static MaterialColor get ticketColor =>
-      isDarkMode ? customTicket : Colors.cyan;
+  static MaterialColor customMisCategorias = MaterialColor(0xFFADD8E6, colorCustomBlueGrey);
+  static MaterialColor get misCategoriasColor => isDarkMode ? customMisCategorias : Colors.blue;
+  static MaterialColor customMisCursos = MaterialColor(0xFFFFB6C1, colorCustomBlueGrey);
+  static MaterialColor get misCursosColor => isDarkMode ? customMisCursos : Colors.pink;
+  static MaterialColor customExplorar = MaterialColor(0xFFE0FFFF, colorCustomBlueGrey);
+  static MaterialColor get explorarColor => isDarkMode ? customExplorar : Colors.cyan;
+  static MaterialColor customInsignias = MaterialColor(0xFF800080, colorCustomBlueGrey);
+  static MaterialColor get insigniasColor => isDarkMode ? customInsignias : Colors.purple;
+  static MaterialColor customBloc = MaterialColor(0xFFADD8E6, colorCustomBlueGrey);
+  static MaterialColor get blocDeNotasColor => isDarkMode ? customBloc : Colors.blue;
+  static MaterialColor customTicket = MaterialColor(0xFFE0FFFF, colorCustomBlueGrey);
+  static MaterialColor get ticketColor => isDarkMode ? customTicket : Colors.cyan;
   //static MaterialColor get ExplorarColor => isDarkMode ? Colors.grey : Colors.pink;
 
-  static MaterialColor customAdd =
-      MaterialColor(0xFF90EE90, colorCustomBlueGrey);
-  static MaterialColor get addActionColor =>
-      isDarkMode ? customAdd : Colors.green;
-  static MaterialColor customUpdate =
-      MaterialColor(0xFFADD8E6, colorCustomBlueGrey);
-  static MaterialColor get updateActionColor =>
-      isDarkMode ? customUpdate : Colors.blue;
-  static MaterialColor customDelete =
-      MaterialColor(0xFFFFFCCB, colorCustomBlueGrey);
-  static MaterialColor get deleteActionColor =>
-      isDarkMode ? customDelete : Colors.red;
-
+  static MaterialColor customAdd = MaterialColor(0xFF90EE90, colorCustomBlueGrey);
+  static MaterialColor get addActionColor => isDarkMode ? customAdd : Colors.green;
+  static MaterialColor customUpdate = MaterialColor(0xFFADD8E6, colorCustomBlueGrey);
+  static MaterialColor get updateActionColor => isDarkMode ? customUpdate : Colors.blue;
+  static MaterialColor customDelete = MaterialColor(0xFFFFFCCB, colorCustomBlueGrey);
+  static MaterialColor get deleteActionColor => isDarkMode ? customDelete : Colors.red;
 
   static ThemeData get getTheme => ThemeData(
         primaryColor: primaryColor,

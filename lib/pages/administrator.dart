@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-
-import '../core/res/color.dart';
-import '../core/routes/routes.dart';
-import '../widgets/block_menu.dart';
+import 'package:lexp/core/res/color.dart';
+import 'package:lexp/pages/actions_my_categories.dart';
+import 'package:lexp/pages/actions_my_courses.dart';
+import 'package:lexp/widgets/block_menu.dart';
 
 class AdministratorScreen extends StatefulWidget {
   const AdministratorScreen({Key? key}) : super(key: key);
@@ -19,7 +19,6 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
       ),
-
       body: SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.symmetric(
@@ -45,21 +44,20 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
       children: [
         StaggeredGridTile.count(
           crossAxisCellCount: 1,
-          mainAxisCellCount: 0.40,
+          mainAxisCellCount: 0.45,
           child: BlockMenuContainer(
             color: AppColors.misCategoriasColor,
             icon: Icons.category,
             isSmall: true,
-            //blockSubLabel: "10 Páginas",
             blockTittle: "Mis categorias",
             onTap: () {
-              Navigator.pushNamed(context, Routes.actionsMyCategories);
+              Navigator.push(context, MaterialPageRoute(builder: ((context) => const ActionsMyCategoriesScreen())));
             },
           ),
         ),
         StaggeredGridTile.count(
           crossAxisCellCount: 1,
-          mainAxisCellCount: 0.40,
+          mainAxisCellCount: 0.45,
           child: BlockMenuContainer(
             color: AppColors.misCursosColor,
             icon: Icons.menu_book_outlined,
@@ -67,13 +65,17 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
             //blockSubLabel: "10 Páginas",
             blockTittle: "Mis cursos",
             onTap: () {
-              Navigator.pushNamed(context, Routes.actionsMyCourses);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: ((context) => const ActionsMyCoursesScreen()),
+                  ));
             },
           ),
         ),
         StaggeredGridTile.count(
           crossAxisCellCount: 1,
-          mainAxisCellCount: 0.40,
+          mainAxisCellCount: 0.45,
           child: BlockMenuContainer(
             color: AppColors.ticketColor,
             isSmall: true,
@@ -87,7 +89,7 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
         ),
         StaggeredGridTile.count(
           crossAxisCellCount: 1,
-          mainAxisCellCount: 0.40,
+          mainAxisCellCount: 0.45,
           child: BlockMenuContainer(
             color: AppColors.insigniasColor,
             isSmall: true,
@@ -99,5 +101,4 @@ class _AdministratorScreenState extends State<AdministratorScreen> {
       ],
     );
   }
-
 }

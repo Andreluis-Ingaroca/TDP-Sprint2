@@ -8,7 +8,7 @@ part of 'thematic_unit.dart';
 
 ThematicUnitModel _$ThematicUnitModelFromJson(Map<String, dynamic> json) =>
     ThematicUnitModel(
-      json['status'] as int,
+      json['status'] as int?,
       json['thematicUnitName'] as String,
       json['description'] as String,
       json['portrait'] as String,
@@ -17,8 +17,14 @@ ThematicUnitModel _$ThematicUnitModelFromJson(Map<String, dynamic> json) =>
       json['starRate'] as int,
       json['nTime'] as int,
       json['nBadge'] as int,
+      json['category'] == null
+          ? null
+          : CategoryModel.fromJson(json['category'] as Map<String, dynamic>),
       idThematicUnit: json['idThematicUnit'] as int,
       idCategory: json['idCategory'] as int,
+      listOfContent: (json['listOfContent'] as List<dynamic>?)
+          ?.map((e) => ContentModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$ThematicUnitModelToJson(ThematicUnitModel instance) =>
@@ -34,4 +40,6 @@ Map<String, dynamic> _$ThematicUnitModelToJson(ThematicUnitModel instance) =>
       'starRate': instance.starRate,
       'nTime': instance.nTime,
       'nBadge': instance.nBadge,
+      'category': instance.category,
+      'listOfContent': instance.listOfContent,
     };

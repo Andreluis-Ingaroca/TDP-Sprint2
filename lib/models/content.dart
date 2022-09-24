@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lexp/models/base.dart';
+import 'package:lexp/models/exam.dart';
 
 part 'content.g.dart';
 
@@ -10,8 +11,17 @@ class ContentModel extends BaseModel {
   final int idThematicUnit;
   int posicion;
   String multimedia;
-  ContentModel(super.status, this.contentName, this.posicion, this.multimedia,
-      {required this.idContent, required this.idThematicUnit});
+  //ExamModel? listOfExamen;
+
+  ContentModel(
+    super.status,
+    this.contentName,
+    this.posicion,
+    this.multimedia, {
+    required this.idContent,
+    required this.idThematicUnit,
+    //this.listOfExamen
+  });
 
   factory ContentModel.fromJson(Map<String, dynamic> json) => _$ContentModelFromJson(json);
 

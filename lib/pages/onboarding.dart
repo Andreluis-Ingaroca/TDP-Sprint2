@@ -78,7 +78,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     },
                     icon: Icons.arrow_forward_ios,
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -132,8 +132,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: Colors.white
-                          .withOpacity(_selectedPage == 0 ? 00.1 : 0.7),
+                      color: Colors.white.withOpacity(_selectedPage == 0 ? 00.1 : 0.7),
                     ),
                   ),
                 ),
@@ -147,9 +146,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               width: _selectedPage == i ? 20 : 10,
                               height: 10,
                               decoration: BoxDecoration(
-                                color: i == _selectedPage
-                                    ? Colors.white
-                                    : Colors.white.withOpacity(0.3),
+                                color: i == _selectedPage ? Colors.white : Colors.white.withOpacity(0.3),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               margin: const EdgeInsets.all(4),
@@ -279,8 +276,7 @@ class OnboardingClipper extends CustomClipper<Path> {
 
     path.lineTo(size.width * 0.6 - 10, size.height * 0.89);
 
-    var fiveControlPoint =
-        Offset(size.width * 0.65 - 10, size.height * 0.89 - 30);
+    var fiveControlPoint = Offset(size.width * 0.65 - 10, size.height * 0.89 - 30);
     var fiveEndPoint = Offset(size.width * 0.65 + 10, size.height * 0.85);
     path.quadraticBezierTo(
       fiveControlPoint.dx,
@@ -292,8 +288,7 @@ class OnboardingClipper extends CustomClipper<Path> {
     path.lineTo(size.width * 0.65 + 10, size.height * 0.85);
     path.lineTo(size.width * 0.85, size.height * 0.85);
 
-    var lastControlPoint =
-        Offset(size.width * 0.85 + 40, size.height * 0.85 - 5);
+    var lastControlPoint = Offset(size.width * 0.85 + 40, size.height * 0.85 - 5);
     var lastEndPoint = Offset(size.width, size.height * 0.81);
     path.quadraticBezierTo(
       lastControlPoint.dx,
@@ -327,8 +322,7 @@ class GreenClipper extends CustomClipper<Path> {
       firstEndPoint.dy,
     );
 
-    var secondControlPoint =
-        Offset(size.width * 0.75, (size.height * 0.65) + 65);
+    var secondControlPoint = Offset(size.width * 0.75, (size.height * 0.65) + 65);
     var secondEndPoint = Offset(size.width, size.height * 0.65);
     path.quadraticBezierTo(
       secondControlPoint.dx,
